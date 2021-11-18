@@ -49,6 +49,8 @@ class _NewGameState extends State<NewGame> {
   final _formKey = GlobalKey<FormState>();
   String _lineMode = 'offense';
   String _genderRule = 'rule-a';
+  String? _mainTeam;
+  String? _opponentTeam;
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +69,16 @@ class _NewGameState extends State<NewGame> {
                 TextFormField(
                   decoration: InputDecoration(hintText: 'Your team'),
                   validator: nonEmptyTextValidator,
+                  onSaved: (String? value) {
+                    _mainTeam = value;
+                  },
                 ),
                 TextFormField(
                   decoration: InputDecoration(hintText: 'Opponent'),
                   validator: nonEmptyTextValidator,
+                  onSaved: (String? value) {
+                    _opponentTeam = value;
+                  },
                 ),
                 ListTile(
                   title: Text('Your line'),
@@ -122,6 +130,9 @@ class _NewGameState extends State<NewGame> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         print('form submitted');
+                        _formKey.currentState!.save();
+                        print(
+                            "$_mainTeam VS $_opponentTeam | mixed: $_mixedGenreChecked | rule: $_genderRule");
                       }
                     },
                     child: Text('Start game'))
