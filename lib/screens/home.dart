@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/screens/new_game.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _HomeState();
+  }
+}
+
+class _HomeState extends State<Home> {
+  Game? _currentGame;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,14 +20,22 @@ class Home extends StatelessWidget {
         ),
         body: Center(
             child: OutlinedButton(
-                child: Text('New game'),
+                child: _currentGame != null
+                    ? Text('Continue game')
+                    : Text('New game'),
                 onPressed: () {
                   openNewGameForm(context);
                 })));
   }
 
   void openNewGameForm(BuildContext context) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const NewGame()));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => NewGame(
+              onStart: (Game? game) {
+                setState(() {
+                  _currentGame = game;
+                });
+              },
+            )));
   }
 }

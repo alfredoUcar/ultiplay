@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:ultiplay/models/game.dart';
 
 class NewGame extends StatefulWidget {
-  const NewGame({Key? key}) : super(key: key);
+  final Function onStart;
+  const NewGame({Key? key, required this.onStart}) : super(key: key);
 
   @override
   _NewGameState createState() {
-    return _NewGameState();
+    return _NewGameState(onStart);
   }
 }
 
 class _NewGameState extends State<NewGame> {
-  bool _mixedGenreChecked = false;
+  final Function onStart;
+
+  _NewGameState(this.onStart);
+
+  Game? _game;
+  bool _mixedGenderChecked = false;
   final _formKey = GlobalKey<FormState>();
-  String _lineMode = 'offense';
-  String _genderRule = 'rule-a';
+  String _mainTeamPosition = Position.offense.toString();
+  String _genderRule = GenderRatio.ruleA.toString();
   String? _mainTeam;
   String? _opponentTeam;
 
@@ -50,27 +57,27 @@ class _NewGameState extends State<NewGame> {
                 ),
                 RadioListTile(
                   title: Text('Offense'),
-                  value: 'offense',
-                  groupValue: _lineMode,
-                  onChanged: updateLineMode,
+                  value: Position.offense.toString(),
+                  groupValue: _mainTeamPosition,
+                  onChanged: updateLinePosition,
                 ),
                 RadioListTile(
                   title: Text('Defense'),
-                  value: 'defense',
-                  groupValue: _lineMode,
-                  onChanged: updateLineMode,
+                  value: Position.defense.toString(),
+                  groupValue: _mainTeamPosition,
+                  onChanged: updateLinePosition,
                 ),
                 CheckboxListTile(
-                  value: _mixedGenreChecked,
+                  value: _mixedGenderChecked,
                   onChanged: (bool? value) {
                     setState(() {
-                      _mixedGenreChecked = value ?? false;
+                      _mixedGenderChecked = value ?? false;
                     });
                   },
                   title: Text('Mixed'),
                 ),
                 Visibility(
-                  visible: _mixedGenreChecked,
+                  visible: _mixedGenderChecked,
                   child: Column(
                     children: [
                       ListTile(
@@ -78,15 +85,15 @@ class _NewGameState extends State<NewGame> {
                       ),
                       RadioListTile(
                         title: Text('Rule A'),
-                        value: 'rule-a',
+                        value: GenderRatio.ruleA.toString(),
                         groupValue: _genderRule,
-                        onChanged: updateGenderRule,
+                        onChanged: updateGenderRatioRule,
                       ),
                       RadioListTile(
                         title: Text('Rule B'),
-                        value: 'rule-b',
+                        value: GenderRatio.ruleB.toString(),
                         groupValue: _genderRule,
-                        onChanged: updateGenderRule,
+                        onChanged: updateGenderRatioRule,
                       ),
                     ],
                   ),
@@ -94,10 +101,29 @@ class _NewGameState extends State<NewGame> {
                 ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        print('form submitted');
                         _formKey.currentState!.save();
-                        print(
-                            "$_mainTeam VS $_opponentTeam | mixed: $_mixedGenreChecked | rule: $_genderRule");
+                        Position position = Position.values.firstWhere(
+                            (element) =>
+                                element.toString() == _mainTeamPosition);
+                        if (_mixedGenderChecked) {
+                          GenderRatio ratio = GenderRatio.values.firstWhere(
+                              (element) => element.toString() == _genderRule);
+                          _game = new Game(
+                            yourTeamName: _mainTeam ?? 'main team',
+                            opponentTeamName: _opponentTeam ?? 'second team',
+                            initialPosition: position,
+                            gender: Gender.mixed,
+                            genderRatio: ratio,
+                          );
+                        } else {
+                          _game = new Game(
+                            yourTeamName: _mainTeam ?? 'main team',
+                            opponentTeamName: _opponentTeam ?? 'second team',
+                            initialPosition: position,
+                          );
+                        }
+                        onStart(_game);
+                        Navigator.of(context).pop();
                       }
                     },
                     child: Text('Start game'))
@@ -109,15 +135,15 @@ class _NewGameState extends State<NewGame> {
     );
   }
 
-  void updateLineMode(String? value) {
+  void updateLinePosition(String? value) {
     setState(() {
-      _lineMode = value ?? 'offense';
+      _mainTeamPosition = value ?? Position.offense.toString();
     });
   }
 
-  void updateGenderRule(String? value) {
+  void updateGenderRatioRule(String? value) {
     setState(() {
-      _genderRule = value ?? 'rule-a';
+      _genderRule = value ?? GenderRatio.ruleA.toString();
     });
   }
 
