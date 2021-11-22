@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ultiplay/models/game.dart';
+import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/new_game.dart';
 
 class Home extends StatefulWidget {
@@ -19,13 +20,22 @@ class _HomeState extends State<Home> {
           title: Text('Ultiplay'),
         ),
         body: Center(
-            child: OutlinedButton(
-                child: _currentGame != null
-                    ? Text('Continue game')
-                    : Text('New game'),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Visibility(
+              visible: _currentGame != null,
+              child: OutlinedButton(
+                  child: Text('Continue game'),
+                  onPressed: () {
+                    openCurrentGame(context);
+                  }),
+            ),
+            OutlinedButton(
+                child: Text('New game'),
                 onPressed: () {
                   openNewGameForm(context);
-                })));
+                })
+          ]),
+        ));
   }
 
   void openNewGameForm(BuildContext context) {
@@ -37,5 +47,10 @@ class _HomeState extends State<Home> {
                 });
               },
             )));
+  }
+
+  void openCurrentGame(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => CurrentGame(_currentGame as Game)));
   }
 }

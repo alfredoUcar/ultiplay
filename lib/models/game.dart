@@ -5,22 +5,30 @@ enum Gender { open, mixed, female }
 enum GenderRatio { ruleA, ruleB }
 
 class Game {
-  String yourTeamName;
-  String opponentTeamName;
-  Gender gender;
-  Position initialPosition;
+  String _yourTeamName;
+  String _opponentTeamName;
+  Gender _gender;
+  Position _initialPosition;
 
   /// [genderRatio] should be only defined on mixed [gender] games
-  GenderRatio? genderRatio;
+  GenderRatio? _genderRatio;
 
   Game({
-    required this.yourTeamName,
-    required this.opponentTeamName,
-    required this.initialPosition,
-    this.gender = Gender.open,
-    this.genderRatio,
-  }) : assert(
+    required String yourTeamName,
+    required String opponentTeamName,
+    required Position initialPosition,
+    Gender gender = Gender.open,
+    GenderRatio? genderRatio,
+  })  : _yourTeamName = yourTeamName,
+        _opponentTeamName = opponentTeamName,
+        _gender = gender,
+        _genderRatio = genderRatio,
+        _initialPosition = initialPosition,
+        assert(
 
             /// Validate that ratio is only defined on mixed games
             gender == Gender.mixed ? genderRatio != null : genderRatio == null);
+
+  String get yourTeamName => _yourTeamName;
+  String get opponentTeamName => _opponentTeamName;
 }

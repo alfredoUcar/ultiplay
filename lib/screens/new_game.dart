@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ultiplay/models/game.dart';
 
+import 'current_game.dart';
+
 class NewGame extends StatefulWidget {
   final Function onStart;
   const NewGame({Key? key, required this.onStart}) : super(key: key);
@@ -123,7 +125,7 @@ class _NewGameState extends State<NewGame> {
                           );
                         }
                         onStart(_game);
-                        Navigator.of(context).pop();
+                        openNewGame(context);
                       }
                     },
                     child: Text('Start game'))
@@ -152,5 +154,10 @@ class _NewGameState extends State<NewGame> {
       return 'Please enter some text';
     }
     return null;
+  }
+
+  void openNewGame(BuildContext context) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => CurrentGame(_game as Game)));
   }
 }
