@@ -4,6 +4,10 @@ enum Gender { open, mixed, female }
 /// Only for mixed games
 enum GenderRatio { ruleA, ruleB }
 
+class AlreadyStarted implements Exception {}
+
+class AlreadyEnded implements Exception {}
+
 class Game {
   String _yourTeamName;
   String _opponentTeamName;
@@ -12,6 +16,8 @@ class Game {
 
   /// [genderRatio] should be only defined on mixed [gender] games
   GenderRatio? _genderRatio;
+
+  DateTime? _startedAt, _endedAt;
 
   Game({
     required String yourTeamName,
@@ -31,4 +37,22 @@ class Game {
 
   String get yourTeamName => _yourTeamName;
   String get opponentTeamName => _opponentTeamName;
+
+  void start() {
+    if (_startedAt != null) {
+      throw AlreadyStarted();
+    }
+
+    _startedAt = DateTime.now();
+  }
+
+  void finish() {
+    if (_endedAt != null) {
+      throw AlreadyEnded();
+    }
+
+    _endedAt = DateTime.now();
+  }
+
+  Duration getElapsed() => DateTime.now().difference(_startedAt as DateTime);
 }

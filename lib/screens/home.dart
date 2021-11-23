@@ -44,6 +44,7 @@ class _HomeState extends State<Home> {
               onStart: (Game? game) {
                 setState(() {
                   _currentGame = game;
+                  _currentGame!.start();
                 });
               },
             )));
