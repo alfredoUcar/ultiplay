@@ -157,6 +157,7 @@ class _NewGameState extends State<NewGame> {
   }
 
   void openNewGame(BuildContext context) {
+    Navigator.of(context).pop();
     Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => CurrentGame(_game as Game)));
   }

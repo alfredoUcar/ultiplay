@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ultiplay/models/game.dart';
-import 'package:ultiplay/screens/new_game.dart';
 
 class CurrentGame extends StatefulWidget {
   final Game game;
@@ -22,7 +21,6 @@ class _CurrentGame extends State<CurrentGame> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
           centerTitle: true,
           title: Text("${_game.yourTeamName} VS ${_game.opponentTeamName}"),
         ),
