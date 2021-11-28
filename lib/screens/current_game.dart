@@ -112,11 +112,11 @@ class _CurrentGame extends State<CurrentGame>
     if (_game.isPullTime()) {
       return pullStep();
     } else {
-      return Text('Not implemented yet');
+      return playOnStep();
     }
   }
 
-  Container pullStep() {
+  Widget pullStep() {
     var team = _game.onDefense() ? _game.yourTeamName : _game.opponentTeamName;
     return Container(
       color: Colors.blue[50],
@@ -146,6 +146,53 @@ class _CurrentGame extends State<CurrentGame>
                     },
                     style: ButtonStyle(),
                     child: Text('Done')),
+                ElevatedButton(onPressed: null, child: Text('Finish')),
+              ],
+            ),
+          ), // actions
+        ],
+      ),
+    );
+  }
+
+  Widget playOnStep() {
+    var team = _game.onOffense() ? _game.yourTeamName : _game.opponentTeamName;
+    return Container(
+      color: Colors.blue[50],
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: Text(
+              'Play On',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ), // title
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Text('$team on offense'),
+          ), // description
+          Padding(
+            padding: const EdgeInsets.only(bottom: 15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _game.goal();
+                      });
+                    },
+                    style: ButtonStyle(),
+                    child: Text('Goal')),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _game.turnover();
+                      });
+                    },
+                    style: ButtonStyle(),
+                    child: Text('Turnover')),
                 ElevatedButton(onPressed: null, child: Text('Finish')),
               ],
             ),
