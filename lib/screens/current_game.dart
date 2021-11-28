@@ -88,21 +88,9 @@ class _CurrentGame extends State<CurrentGame>
   }
 
   Widget gameTimeline() {
-    List<String> entries = [
-      'Pull',
-      'Turnover',
-      'Turnover',
-      'Turnover',
-      'Point from Dimonis',
-      'Pull',
-      'Turnover',
-      'Turnover',
-      'Turnover',
-    ]; // TODO: replace with game entries
-
-    if (entries.isEmpty) {
+    if (_game.checkpoints.isEmpty) {
       return Container(
-        child: Text('No actions performed yet'),
+        child: Expanded(child: Center(child: Text('No actions performed yet'))),
       );
     } else {
       return Container(
@@ -110,10 +98,11 @@ class _CurrentGame extends State<CurrentGame>
           child: ListView.separated(
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return ListTile(title: Text(entries[index]));
+                return ListTile(
+                    title: Text(_game.checkpoints[index].toString()));
               },
               separatorBuilder: (_, __) => Divider(),
-              itemCount: entries.length),
+              itemCount: _game.checkpoints.length),
         ),
       );
     }
