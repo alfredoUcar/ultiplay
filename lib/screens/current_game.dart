@@ -48,10 +48,9 @@ class _CurrentGame extends State<CurrentGame>
         body: Column(
           children: [
             gameStatus(),
-            Divider(
-              thickness: 1.8,
-            ),
+            Divider(thickness: 1.8),
             gameTimeline(),
+            currentStep(),
           ],
         ));
   }
@@ -90,15 +89,15 @@ class _CurrentGame extends State<CurrentGame>
 
   Widget gameTimeline() {
     List<String> entries = [
-      'a',
-      'b',
-      'c',
-      'd',
-      'e',
-      'f',
-      'g',
-      'h',
-      'i',
+      'Pull',
+      'Turnover',
+      'Turnover',
+      'Turnover',
+      'Point from Dimonis',
+      'Pull',
+      'Turnover',
+      'Turnover',
+      'Turnover',
     ]; // TODO: replace with game entries
 
     if (entries.isEmpty) {
@@ -111,12 +110,47 @@ class _CurrentGame extends State<CurrentGame>
           child: ListView.separated(
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return ListTile(title: Text('Item $index: ${entries[index]}'));
+                return ListTile(title: Text(entries[index]));
               },
               separatorBuilder: (_, __) => Divider(),
               itemCount: entries.length),
         ),
       );
     }
+  }
+
+  Widget currentStep() {
+    return Container(
+      color: Colors.blue[50],
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: Text(
+              'Pull time',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ), // title
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child:
+                Text('Dimonis throws pull'), // TODO: replace with actual team
+          ), // description
+          Padding(
+            padding: const EdgeInsets.only(bottom: 15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                    onPressed: () {},
+                    style: ButtonStyle(),
+                    child: Text('Done')),
+                ElevatedButton(onPressed: () {}, child: Text('Finish')),
+              ],
+            ),
+          ), // actions
+        ],
+      ),
+    );
   }
 }
