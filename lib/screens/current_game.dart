@@ -70,7 +70,7 @@ class _CurrentGame extends State<CurrentGame>
             child: Column(
               children: [
                 Text(
-                  "12-11", // TODO: replace with actual score
+                  "${_game.yourScore} - ${_game.opponentScore}",
                   style: scoreBoardStyle,
                 ),
                 Text(
