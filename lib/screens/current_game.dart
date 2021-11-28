@@ -120,6 +120,15 @@ class _CurrentGame extends State<CurrentGame>
   }
 
   Widget currentStep() {
+    if (_game.isPullTime()) {
+      return pullStep();
+    } else {
+      return Text('Not implemented yet');
+    }
+  }
+
+  Container pullStep() {
+    var team = _game.onDefense() ? _game.yourTeamName : _game.opponentTeamName;
     return Container(
       color: Colors.blue[50],
       child: Column(
@@ -133,8 +142,7 @@ class _CurrentGame extends State<CurrentGame>
           ), // title
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child:
-                Text('Dimonis throws pull'), // TODO: replace with actual team
+            child: Text('$team throws pull'),
           ), // description
           Padding(
             padding: const EdgeInsets.only(bottom: 15.0),
