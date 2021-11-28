@@ -51,7 +51,72 @@ class _CurrentGame extends State<CurrentGame>
             Divider(
               thickness: 1.8,
             ),
+            gameTimeline(),
           ],
         ));
+  }
+
+  Widget gameStatus() {
+    var teamNameStyle = TextStyle(fontSize: 18);
+    var scoreBoardStyle = TextStyle(fontSize: 40, fontWeight: FontWeight.bold);
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: Row(
+        children: [
+          Text(
+            _game.yourTeamName,
+            style: teamNameStyle,
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  "12-11", // TODO: replace with actual score
+                  style: scoreBoardStyle,
+                ),
+                Text(
+                    "${_elapsed.inMinutes}:${_elapsed.inSeconds.remainder(60)}"),
+              ],
+            ),
+          ),
+          Text(
+            _game.opponentTeamName,
+            style: teamNameStyle,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget gameTimeline() {
+    List<String> entries = [
+      'a',
+      'b',
+      'c',
+      'd',
+      'e',
+      'f',
+      'g',
+      'h',
+      'i',
+    ]; // TODO: replace with game entries
+
+    if (entries.isEmpty) {
+      return Container(
+        child: Text('No actions performed yet'),
+      );
+    } else {
+      return Container(
+        child: Expanded(
+          child: ListView.separated(
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListTile(title: Text('Item $index: ${entries[index]}'));
+              },
+              separatorBuilder: (_, __) => Divider(),
+              itemCount: entries.length),
+        ),
+      );
+    }
   }
 }
