@@ -62,6 +62,9 @@ class _CurrentGame extends State<CurrentGame>
       padding: EdgeInsets.all(10),
       child: Row(
         children: [
+          _game.onOffense()
+              ? Icon(Icons.circle, color: Colors.green)
+              : Icon(Icons.circle_outlined, color: Colors.grey[400]),
           Text(
             _game.yourTeamName,
             style: teamNameStyle,
@@ -82,6 +85,9 @@ class _CurrentGame extends State<CurrentGame>
             _game.opponentTeamName,
             style: teamNameStyle,
           ),
+          _game.onDefense()
+              ? Icon(Icons.circle, color: Colors.green)
+              : Icon(Icons.circle_outlined, color: Colors.grey[400]),
         ],
       ),
     );
