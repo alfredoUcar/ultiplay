@@ -119,11 +119,11 @@ class Game {
 
   void turnover() {
     if (onOffense()) {
-      _yourScore++;
+      _yourPosition = Position.defense;
       _checkpoints.add(
           new Checkpoint(team: _yourTeamName, type: CheckpointType.turnover));
     } else {
-      _opponentScore++;
+      _yourPosition = Position.offense;
       _checkpoints.add(new Checkpoint(
           team: _opponentTeamName, type: CheckpointType.turnover));
     }
