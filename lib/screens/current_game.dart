@@ -146,7 +146,7 @@ class _CurrentGame extends State<CurrentGame>
                     },
                     style: ButtonStyle(),
                     child: Text('Done')),
-                ElevatedButton(onPressed: () {}, child: Text('Finish')),
+                ElevatedButton(onPressed: null, child: Text('Finish')),
               ],
             ),
           ), // actions
