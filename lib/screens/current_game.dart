@@ -139,7 +139,11 @@ class _CurrentGame extends State<CurrentGame>
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        _game.pull();
+                      });
+                    },
                     style: ButtonStyle(),
                     child: Text('Done')),
                 ElevatedButton(onPressed: () {}, child: Text('Finish')),
