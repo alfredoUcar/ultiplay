@@ -40,8 +40,6 @@ class _CurrentGame extends State<CurrentGame>
 
   @override
   Widget build(BuildContext context) {
-    var teamNameStyle = TextStyle(fontSize: 18);
-    var scoreBoardStyle = TextStyle(fontSize: 40, fontWeight: FontWeight.bold);
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -49,32 +47,9 @@ class _CurrentGame extends State<CurrentGame>
         ),
         body: Column(
           children: [
-            Container(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  Text(
-                    _game.yourTeamName,
-                    style: teamNameStyle,
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Text(
-                          "12-11", // TODO: replace with actual score
-                          style: scoreBoardStyle,
-                        ),
-                        Text(
-                            "${_elapsed.inMinutes}:${_elapsed.inSeconds.remainder(60)}"),
-                      ],
-                    ),
-                  ),
-                  Text(
-                    _game.opponentTeamName,
-                    style: teamNameStyle,
-                  ),
-                ],
-              ),
+            gameStatus(),
+            Divider(
+              thickness: 1.8,
             ),
           ],
         ));
