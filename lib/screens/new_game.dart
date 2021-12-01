@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ultiplay/models/game.dart';
-import 'package:ultiplay/screens/home.dart';
 
 import 'current_game.dart';
 
@@ -109,78 +108,90 @@ class _NewGameState extends State<NewGame> {
                   },
                   title: Text('Mixed'),
                 ),
-                Visibility(
-                  visible: _mixedGenderChecked,
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text('Gender ratio'),
-                      ),
-                      RadioListTile(
-                        title: Text('Rule A: prescribed'),
-                        value: GenderRatioRule.ruleA.toString(),
-                        groupValue: _genderRule,
-                        onChanged: updateGenderRatioRule,
-                      ),
-                      RadioListTile(
-                        title: Text('Rule B: end zone decides'),
-                        value: GenderRatioRule.ruleB.toString(),
-                        groupValue: _genderRule,
-                        onChanged: updateGenderRatioRule,
-                      ),
-                    ],
-                  ),
-                ),
-                Visibility(
-                  visible: _mixedGenderChecked &&
-                      _genderRule == GenderRatioRule.ruleA.toString(),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text('Starting with'),
-                      ),
-                      RadioListTile(
-                        title: Text('More women'),
-                        value: GenderRatio.moreWomen.toString(),
-                        groupValue: _genderRatio,
-                        onChanged: updateGenderRatio,
-                      ),
-                      RadioListTile(
-                        title: Text('More men'),
-                        value: GenderRatio.moreMen.toString(),
-                        groupValue: _genderRatio,
-                        onChanged: updateGenderRatio,
-                      ),
-                    ],
-                  ),
-                ),
-                Visibility(
-                  visible: _mixedGenderChecked &&
-                      _genderRule == GenderRatioRule.ruleB.toString(),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text('Endzone A side'),
-                      ),
-                      RadioListTile(
-                        title: Text('Left'),
-                        value: FieldSide.left.toString(),
-                        groupValue: _endzoneASide,
-                        onChanged: updateEndzoneASide,
-                      ),
-                      RadioListTile(
-                        title: Text('Right'),
-                        value: FieldSide.right.toString(),
-                        groupValue: _endzoneASide,
-                        onChanged: updateEndzoneASide,
-                      ),
-                    ],
-                  ),
-                ),
+                genderRatioRules(),
+                genderRatioOptionsForRuleA(),
+                genderRatioOptionsForRuleB(),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget genderRatioOptionsForRuleB() {
+    return Visibility(
+      visible: _mixedGenderChecked &&
+          _genderRule == GenderRatioRule.ruleB.toString(),
+      child: Column(
+        children: [
+          ListTile(
+            title: Text('Endzone A side'),
+          ),
+          RadioListTile(
+            title: Text('Left'),
+            value: FieldSide.left.toString(),
+            groupValue: _endzoneASide,
+            onChanged: updateEndzoneASide,
+          ),
+          RadioListTile(
+            title: Text('Right'),
+            value: FieldSide.right.toString(),
+            groupValue: _endzoneASide,
+            onChanged: updateEndzoneASide,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget genderRatioOptionsForRuleA() {
+    return Visibility(
+      visible: _mixedGenderChecked &&
+          _genderRule == GenderRatioRule.ruleA.toString(),
+      child: Column(
+        children: [
+          ListTile(
+            title: Text('Starting with'),
+          ),
+          RadioListTile(
+            title: Text('More women'),
+            value: GenderRatio.moreWomen.toString(),
+            groupValue: _genderRatio,
+            onChanged: updateGenderRatio,
+          ),
+          RadioListTile(
+            title: Text('More men'),
+            value: GenderRatio.moreMen.toString(),
+            groupValue: _genderRatio,
+            onChanged: updateGenderRatio,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget genderRatioRules() {
+    return Visibility(
+      visible: _mixedGenderChecked,
+      child: Column(
+        children: [
+          ListTile(
+            title: Text('Gender ratio'),
+          ),
+          RadioListTile(
+            title: Text('Rule A: prescribed'),
+            value: GenderRatioRule.ruleA.toString(),
+            groupValue: _genderRule,
+            onChanged: updateGenderRatioRule,
+          ),
+          RadioListTile(
+            title: Text('Rule B: end zone decides'),
+            value: GenderRatioRule.ruleB.toString(),
+            groupValue: _genderRule,
+            onChanged: updateGenderRatioRule,
+          ),
+        ],
       ),
     );
   }
