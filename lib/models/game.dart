@@ -1,9 +1,11 @@
 enum Position { offense, defense }
 enum Gender { open, mixed, female }
 enum CheckpointType { goal, turnover, pull, call, custom }
+enum FieldSide { left, right }
 
 /// Only for mixed games
-enum GenderRatio { ruleA, ruleB }
+enum GenderRatioRule { ruleA, ruleB }
+enum GenderRatio { moreWomen, moreMen }
 
 class AlreadyStarted implements Exception {}
 
@@ -51,7 +53,7 @@ class Game {
   List<Checkpoint> _checkpoints = [];
 
   /// [genderRatio] should be only defined on mixed [gender] games
-  GenderRatio? _genderRatio;
+  GenderRatioRule? _genderRatio;
 
   DateTime? _startedAt, _endedAt;
 
@@ -60,7 +62,7 @@ class Game {
     required String opponentTeamName,
     required Position initialPosition,
     Gender gender = Gender.open,
-    GenderRatio? genderRatio,
+    GenderRatioRule? genderRatio,
   })  : _yourTeamName = yourTeamName,
         _opponentTeamName = opponentTeamName,
         _gender = gender,

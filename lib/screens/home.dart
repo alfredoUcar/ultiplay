@@ -4,6 +4,8 @@ import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/new_game.dart';
 
 class Home extends StatefulWidget {
+  static const routeName = 'home';
+
   @override
   State<StatefulWidget> createState() {
     return _HomeState();
@@ -39,15 +41,12 @@ class _HomeState extends State<Home> {
   }
 
   void openNewGameForm(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => NewGame(
-              onStart: (Game? game) {
-                setState(() {
-                  _currentGame = game;
-                  _currentGame!.start();
-                });
-              },
-            )));
+    Navigator.of(context).pushNamed(NewGame.routeName, arguments: (Game? game) {
+      setState(() {
+        _currentGame = game;
+        _currentGame!.start();
+      });
+    });
   }
 
   void openCurrentGame(BuildContext context) {

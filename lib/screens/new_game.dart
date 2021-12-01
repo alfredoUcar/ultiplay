@@ -1,37 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:ultiplay/models/game.dart';
+import 'package:ultiplay/screens/home.dart';
 
 import 'current_game.dart';
 
 class NewGame extends StatefulWidget {
-  final Function onStart;
-  const NewGame({Key? key, required this.onStart}) : super(key: key);
+  static const routeName = 'new-game';
 
   @override
   _NewGameState createState() {
-    return _NewGameState(onStart);
+    return _NewGameState();
   }
 }
 
 class _NewGameState extends State<NewGame> {
-  final Function onStart;
-
-  _NewGameState(this.onStart);
+  late Function onStart;
 
   Game? _game;
   bool _mixedGenderChecked = false;
   final _formKey = GlobalKey<FormState>();
   String _mainTeamPosition = Position.offense.toString();
-  String _genderRule = GenderRatio.ruleA.toString();
+  String _genderRule = GenderRatioRule.ruleA.toString();
+  String _genderRatio = GenderRatio.moreWomen.toString();
   String? _mainTeam;
   String? _opponentTeam;
+  String? _endzoneASide = FieldSide.left.toString();
 
   @override
   Widget build(BuildContext context) {
+    onStart = ModalRoute.of(context)!.settings.arguments as Function;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('New game'),
         centerTitle: true,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: onSubmit,
+        child: Icon(Icons.play_arrow),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(Icons.home),
+              color: Colors.white,
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, NewGame.routeName,
+                    arguments: onStart);
+              },
+              icon: Icon(Icons.restart_alt),
+              color: Colors.white,
+            ),
+          ],
+        ),
+        color: Colors.blue,
       ),
       body: Container(
         child: Padding(
@@ -86,55 +117,99 @@ class _NewGameState extends State<NewGame> {
                         title: Text('Gender ratio'),
                       ),
                       RadioListTile(
-                        title: Text('Rule A'),
-                        value: GenderRatio.ruleA.toString(),
+                        title: Text('Rule A: prescribed'),
+                        value: GenderRatioRule.ruleA.toString(),
                         groupValue: _genderRule,
                         onChanged: updateGenderRatioRule,
                       ),
                       RadioListTile(
-                        title: Text('Rule B'),
-                        value: GenderRatio.ruleB.toString(),
+                        title: Text('Rule B: end zone decides'),
+                        value: GenderRatioRule.ruleB.toString(),
                         groupValue: _genderRule,
                         onChanged: updateGenderRatioRule,
                       ),
                     ],
                   ),
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        Position position = Position.values.firstWhere(
-                            (element) =>
-                                element.toString() == _mainTeamPosition);
-                        if (_mixedGenderChecked) {
-                          GenderRatio ratio = GenderRatio.values.firstWhere(
-                              (element) => element.toString() == _genderRule);
-                          _game = new Game(
-                            yourTeamName: _mainTeam ?? 'main team',
-                            opponentTeamName: _opponentTeam ?? 'second team',
-                            initialPosition: position,
-                            gender: Gender.mixed,
-                            genderRatio: ratio,
-                          );
-                        } else {
-                          _game = new Game(
-                            yourTeamName: _mainTeam ?? 'main team',
-                            opponentTeamName: _opponentTeam ?? 'second team',
-                            initialPosition: position,
-                          );
-                        }
-                        onStart(_game);
-                        openNewGame(context);
-                      }
-                    },
-                    child: Text('Start game'))
+                Visibility(
+                  visible: _mixedGenderChecked &&
+                      _genderRule == GenderRatioRule.ruleA.toString(),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text('Starting with'),
+                      ),
+                      RadioListTile(
+                        title: Text('More women'),
+                        value: GenderRatio.moreWomen.toString(),
+                        groupValue: _genderRatio,
+                        onChanged: updateGenderRatio,
+                      ),
+                      RadioListTile(
+                        title: Text('More men'),
+                        value: GenderRatio.moreMen.toString(),
+                        groupValue: _genderRatio,
+                        onChanged: updateGenderRatio,
+                      ),
+                    ],
+                  ),
+                ),
+                Visibility(
+                  visible: _mixedGenderChecked &&
+                      _genderRule == GenderRatioRule.ruleB.toString(),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text('Endzone A side'),
+                      ),
+                      RadioListTile(
+                        title: Text('Left'),
+                        value: FieldSide.left.toString(),
+                        groupValue: _endzoneASide,
+                        onChanged: updateEndzoneASide,
+                      ),
+                      RadioListTile(
+                        title: Text('Right'),
+                        value: FieldSide.right.toString(),
+                        groupValue: _endzoneASide,
+                        onChanged: updateEndzoneASide,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  void onSubmit() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      Position position = Position.values
+          .firstWhere((element) => element.toString() == _mainTeamPosition);
+      if (_mixedGenderChecked) {
+        GenderRatioRule ratio = GenderRatioRule.values
+            .firstWhere((element) => element.toString() == _genderRule);
+        _game = new Game(
+          yourTeamName: _mainTeam ?? 'main team',
+          opponentTeamName: _opponentTeam ?? 'second team',
+          initialPosition: position,
+          gender: Gender.mixed,
+          genderRatio: ratio,
+        );
+      } else {
+        _game = new Game(
+          yourTeamName: _mainTeam ?? 'main team',
+          opponentTeamName: _opponentTeam ?? 'second team',
+          initialPosition: position,
+        );
+      }
+      onStart(_game);
+      openNewGame(context);
+    }
   }
 
   void updateLinePosition(String? value) {
@@ -145,7 +220,19 @@ class _NewGameState extends State<NewGame> {
 
   void updateGenderRatioRule(String? value) {
     setState(() {
-      _genderRule = value ?? GenderRatio.ruleA.toString();
+      _genderRule = value ?? GenderRatioRule.ruleA.toString();
+    });
+  }
+
+  void updateGenderRatio(String? value) {
+    setState(() {
+      _genderRatio = value ?? GenderRatio.moreWomen.toString();
+    });
+  }
+
+  void updateEndzoneASide(String? value) {
+    setState(() {
+      _endzoneASide = value ?? FieldSide.left.toString();
     });
   }
 
