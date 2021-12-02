@@ -1,5 +1,5 @@
 enum Position { offense, defense }
-enum Gender { open, mixed, female }
+enum Division { open, mixed, women, master, grandmaster }
 enum CheckpointType { goal, turnover, pull, call, custom }
 enum FieldSide { left, right }
 
@@ -45,7 +45,7 @@ class Checkpoint {
 class Game {
   String _yourTeamName;
   String _opponentTeamName;
-  Gender _gender;
+  Division _division;
   Position _yourPosition;
   int _yourScore = 0;
   int _opponentScore = 0;
@@ -61,17 +61,19 @@ class Game {
     required String yourTeamName,
     required String opponentTeamName,
     required Position initialPosition,
-    Gender gender = Gender.open,
+    Division division = Division.open,
     GenderRatioRule? genderRatio,
   })  : _yourTeamName = yourTeamName,
         _opponentTeamName = opponentTeamName,
-        _gender = gender,
+        _division = division,
         _genderRatio = genderRatio,
         _yourPosition = initialPosition,
         assert(
 
             /// Validate that ratio is only defined on mixed games
-            gender == Gender.mixed ? genderRatio != null : genderRatio == null);
+            division == Division.mixed
+                ? genderRatio != null
+                : genderRatio == null);
 
   String get yourTeamName => _yourTeamName;
   String get opponentTeamName => _opponentTeamName;

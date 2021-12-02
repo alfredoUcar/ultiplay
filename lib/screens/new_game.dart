@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ultiplay/extensions/string.dart';
 import 'package:ultiplay/models/game.dart';
-
 import 'current_game.dart';
 
 class NewGame extends StatefulWidget {
@@ -16,7 +16,7 @@ class _NewGameState extends State<NewGame> {
   late Function onStart;
 
   Game? _game;
-  bool _mixedGenderChecked = false;
+  String? _division;
   final _formKey = GlobalKey<FormState>();
   String _mainTeamPosition = Position.offense.toString();
   String _genderRule = GenderRatioRule.ruleA.toString();
@@ -99,15 +99,7 @@ class _NewGameState extends State<NewGame> {
                   groupValue: _mainTeamPosition,
                   onChanged: updateLinePosition,
                 ),
-                CheckboxListTile(
-                  value: _mixedGenderChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _mixedGenderChecked = value ?? false;
-                    });
-                  },
-                  title: Text('Mixed'),
-                ),
+                divisionOptions(),
                 genderRatioRules(),
                 genderRatioOptionsForRuleA(),
                 genderRatioOptionsForRuleB(),
@@ -119,9 +111,35 @@ class _NewGameState extends State<NewGame> {
     );
   }
 
+  Widget divisionOptions() {
+    return Column(
+      children: [
+        ListTile(
+          title: Text('Division'),
+        ),
+        ...Division.values.asMap().entries.map((entry) {
+          Division division = entry.value;
+          String name = division.toString().split('.').last;
+          return RadioListTile(
+            title: Text(name.capitalize()),
+            value: division.toString(),
+            groupValue: _division,
+            onChanged: (String? newDivision) {
+              if (newDivision != null) {
+                setState(() {
+                  _division = newDivision;
+                });
+              }
+            },
+          );
+        }),
+      ],
+    );
+  }
+
   Widget genderRatioOptionsForRuleB() {
     return Visibility(
-      visible: _mixedGenderChecked &&
+      visible: _division == Division.mixed.toString() &&
           _genderRule == GenderRatioRule.ruleB.toString(),
       child: Column(
         children: [
@@ -147,7 +165,7 @@ class _NewGameState extends State<NewGame> {
 
   Widget genderRatioOptionsForRuleA() {
     return Visibility(
-      visible: _mixedGenderChecked &&
+      visible: _division == Division.mixed.toString() &&
           _genderRule == GenderRatioRule.ruleA.toString(),
       child: Column(
         children: [
@@ -173,7 +191,7 @@ class _NewGameState extends State<NewGame> {
 
   Widget genderRatioRules() {
     return Visibility(
-      visible: _mixedGenderChecked,
+      visible: _division == Division.mixed.toString(),
       child: Column(
         children: [
           ListTile(
@@ -201,14 +219,14 @@ class _NewGameState extends State<NewGame> {
       _formKey.currentState!.save();
       Position position = Position.values
           .firstWhere((element) => element.toString() == _mainTeamPosition);
-      if (_mixedGenderChecked) {
+      if (_division == Division.mixed.toString()) {
         GenderRatioRule ratio = GenderRatioRule.values
             .firstWhere((element) => element.toString() == _genderRule);
         _game = new Game(
           yourTeamName: _mainTeam ?? 'main team',
           opponentTeamName: _opponentTeam ?? 'second team',
           initialPosition: position,
-          gender: Gender.mixed,
+          division: Division.mixed,
           genderRatio: ratio,
         );
       } else {
