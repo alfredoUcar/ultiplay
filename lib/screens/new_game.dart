@@ -22,6 +22,7 @@ class _NewGameState extends State<NewGame> {
   String _mainTeamPosition = Position.offense.toString();
   String _mainTeamSide = FieldSide.left.toString();
   String _genderRule = GenderRatioRule.ruleA.toString();
+  String _modality = Modality.grass.toString();
   String _genderRatio = GenderRatio.moreWomen.toString();
   String? _mainTeam;
   String? _opponentTeam;
@@ -86,6 +87,7 @@ class _NewGameState extends State<NewGame> {
                     _opponentTeam = value;
                   },
                 ),
+                modalityOptions(),
                 lineOptions(),
                 fieldSideOptions(),
                 divisionOptions(),
@@ -116,6 +118,31 @@ class _NewGameState extends State<NewGame> {
               if (value != null) {
                 setState(() {
                   _mainTeamPosition = value;
+                });
+              }
+            },
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget modalityOptions() {
+    return Column(
+      children: [
+        ListTile(
+          title: Text('Modality'),
+        ),
+        ...Modality.values.asMap().entries.map((entry) {
+          Modality modality = entry.value;
+          return RadioListTile(
+            title: Text(modality.name.capitalize()),
+            value: modality.toString(),
+            groupValue: _modality,
+            onChanged: (String? value) {
+              if (value != null) {
+                setState(() {
+                  _modality = value;
                 });
               }
             },

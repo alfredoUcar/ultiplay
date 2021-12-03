@@ -2,6 +2,7 @@ enum Position { offense, defense }
 enum Division { open, mixed, women, master, grandmaster }
 enum CheckpointType { goal, turnover, pull, call, custom }
 enum FieldSide { left, right }
+enum Modality { grass, beach, indoor }
 
 /// Only for mixed games
 enum GenderRatioRule { ruleA, ruleB }
