@@ -17,8 +17,8 @@ class _NewGameState extends State<NewGame> {
   late Function onStart;
 
   Game? _game;
-  String? _division;
   final _formKey = GlobalKey<FormState>();
+  String _division = Division.open.toString();
   String _mainTeamPosition = Position.offense.toString();
   String _genderRule = GenderRatioRule.ruleA.toString();
   String _genderRatio = GenderRatio.moreWomen.toString();
