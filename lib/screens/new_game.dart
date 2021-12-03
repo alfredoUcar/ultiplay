@@ -20,6 +20,7 @@ class _NewGameState extends State<NewGame> {
   final _formKey = GlobalKey<FormState>();
   String _division = Division.open.toString();
   String _mainTeamPosition = Position.offense.toString();
+  String _mainTeamSide = FieldSide.left.toString();
   String _genderRule = GenderRatioRule.ruleA.toString();
   String _genderRatio = GenderRatio.moreWomen.toString();
   String? _mainTeam;
@@ -86,6 +87,7 @@ class _NewGameState extends State<NewGame> {
                   },
                 ),
                 lineOptions(),
+                fieldSideOptions(),
                 divisionOptions(),
                 genderRatioRules(),
                 genderRatioOptionsForRuleA(),
@@ -114,6 +116,31 @@ class _NewGameState extends State<NewGame> {
               if (value != null) {
                 setState(() {
                   _mainTeamPosition = value;
+                });
+              }
+            },
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget fieldSideOptions() {
+    return Column(
+      children: [
+        ListTile(
+          title: Text('Your initial side'),
+        ),
+        ...FieldSide.values.asMap().entries.map((entry) {
+          FieldSide side = entry.value;
+          return RadioListTile(
+            title: Text(side.name.capitalize()),
+            value: side.toString(),
+            groupValue: _mainTeamSide,
+            onChanged: (String? value) {
+              if (value != null) {
+                setState(() {
+                  _mainTeamSide = value;
                 });
               }
             },
