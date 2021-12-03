@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ultiplay/extensions/string.dart';
+import 'package:ultiplay/extensions/enum.dart';
 import 'package:ultiplay/models/game.dart';
 import 'current_game.dart';
 
@@ -84,21 +85,7 @@ class _NewGameState extends State<NewGame> {
                     _opponentTeam = value;
                   },
                 ),
-                ListTile(
-                  title: Text('Your line'),
-                ),
-                RadioListTile(
-                  title: Text('Offense'),
-                  value: Position.offense.toString(),
-                  groupValue: _mainTeamPosition,
-                  onChanged: updateLinePosition,
-                ),
-                RadioListTile(
-                  title: Text('Defense'),
-                  value: Position.defense.toString(),
-                  groupValue: _mainTeamPosition,
-                  onChanged: updateLinePosition,
-                ),
+                lineOptions(),
                 divisionOptions(),
                 genderRatioRules(),
                 genderRatioOptionsForRuleA(),
@@ -111,6 +98,31 @@ class _NewGameState extends State<NewGame> {
     );
   }
 
+  Widget lineOptions() {
+    return Column(
+      children: [
+        ListTile(
+          title: Text('Your initial line'),
+        ),
+        ...Position.values.asMap().entries.map((entry) {
+          Position position = entry.value;
+          return RadioListTile(
+            title: Text(position.name.capitalize()),
+            value: position.toString(),
+            groupValue: _mainTeamPosition,
+            onChanged: (String? value) {
+              if (value != null) {
+                setState(() {
+                  _mainTeamPosition = value;
+                });
+              }
+            },
+          );
+        }),
+      ],
+    );
+  }
+
   Widget divisionOptions() {
     return Column(
       children: [
@@ -119,9 +131,8 @@ class _NewGameState extends State<NewGame> {
         ),
         ...Division.values.asMap().entries.map((entry) {
           Division division = entry.value;
-          String name = division.toString().split('.').last;
           return RadioListTile(
-            title: Text(name.capitalize()),
+            title: Text(division.name.capitalize()),
             value: division.toString(),
             groupValue: _division,
             onChanged: (String? newDivision) {
@@ -239,12 +250,6 @@ class _NewGameState extends State<NewGame> {
       onStart(_game);
       openNewGame(context);
     }
-  }
-
-  void updateLinePosition(String? value) {
-    setState(() {
-      _mainTeamPosition = value ?? Position.offense.toString();
-    });
   }
 
   void updateGenderRatioRule(String? value) {
