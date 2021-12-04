@@ -47,7 +47,9 @@ class Game {
   String _yourTeamName;
   String _opponentTeamName;
   Division _division;
+  Modality _modality;
   Position _yourPosition;
+  FieldSide _yourSide;
   int _yourScore = 0;
   int _opponentScore = 0;
   bool _isPullTime = true;
@@ -62,13 +64,17 @@ class Game {
     required String yourTeamName,
     required String opponentTeamName,
     required Position initialPosition,
+    required FieldSide initialSide,
     Division division = Division.open,
+    Modality modality = Modality.grass,
     GenderRatioRule? genderRatio,
   })  : _yourTeamName = yourTeamName,
         _opponentTeamName = opponentTeamName,
         _division = division,
+        _modality = modality,
         _genderRatio = genderRatio,
         _yourPosition = initialPosition,
+        _yourSide = initialSide,
         assert(
 
             /// Validate that ratio is only defined on mixed games
@@ -77,6 +83,7 @@ class Game {
                 : genderRatio == null);
 
   String get yourTeamName => _yourTeamName;
+  FieldSide get yourTeamSide => _yourSide;
   String get opponentTeamName => _opponentTeamName;
   int get yourScore => _yourScore;
   int get opponentScore => _opponentScore;
@@ -99,8 +106,8 @@ class Game {
 
   Duration getElapsed() => DateTime.now().difference(_startedAt as DateTime);
 
-  bool onOffense() => _yourPosition.index == Position.offense.index;
-  bool onDefense() => _yourPosition.index == Position.defense.index;
+  bool onOffense() => _yourPosition == Position.offense;
+  bool onDefense() => _yourPosition == Position.defense;
   bool isPullTime() => _isPullTime;
 
   void goal() {
@@ -113,6 +120,8 @@ class Game {
       _checkpoints.add(
           new Checkpoint(team: _opponentTeamName, type: CheckpointType.goal));
     }
+
+    switchSide();
     _isPullTime = true;
   }
 
@@ -135,4 +144,12 @@ class Game {
   }
 
   List<Checkpoint> get checkpoints => _checkpoints;
+
+  void switchSide() {
+    if (_yourSide == FieldSide.left) {
+      _yourSide = FieldSide.right;
+    } else {
+      _yourSide = FieldSide.left;
+    }
+  }
 }

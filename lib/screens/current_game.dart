@@ -124,6 +124,9 @@ class _CurrentGame extends State<CurrentGame>
 
   Widget pullStep() {
     var team = _game.onDefense() ? _game.yourTeamName : _game.opponentTeamName;
+    var sideMessage = _game.yourTeamSide == FieldSide.left
+        ? "Your team plays on left side"
+        : "Your team plays on right side";
     return Container(
       color: Colors.blue[50],
       child: Column(
@@ -135,6 +138,10 @@ class _CurrentGame extends State<CurrentGame>
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ), // title
+          Text(
+            sideMessage,
+            style: TextStyle(color: Colors.grey),
+          ), // description
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Text('$team throws pull'),

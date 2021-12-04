@@ -284,6 +284,8 @@ class _NewGameState extends State<NewGame> {
       _formKey.currentState!.save();
       Position position = Position.values
           .firstWhere((element) => element.toString() == _mainTeamPosition);
+      FieldSide side = FieldSide.values
+          .firstWhere((element) => element.toString() == _mainTeamSide);
       if (_division == Division.mixed.toString()) {
         GenderRatioRule ratio = GenderRatioRule.values
             .firstWhere((element) => element.toString() == _genderRule);
@@ -291,12 +293,14 @@ class _NewGameState extends State<NewGame> {
           yourTeamName: _mainTeam ?? 'main team',
           opponentTeamName: _opponentTeam ?? 'second team',
           initialPosition: position,
+          initialSide: side,
           division: Division.mixed,
           genderRatio: ratio,
         );
       } else {
         _game = new Game(
           yourTeamName: _mainTeam ?? 'main team',
+          initialSide: side,
           opponentTeamName: _opponentTeam ?? 'second team',
           initialPosition: position,
         );
