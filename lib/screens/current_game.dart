@@ -24,19 +24,23 @@ class _CurrentGame extends State<CurrentGame>
   @override
   void initState() {
     super.initState();
-    // _ticker = this.createTicker((elapsed) {
-    //   setState(() {
-    //     _elapsed = _game.getElapsed();
-    //   });
-    // });
-    // _ticker.start();
+    _ticker = this.createTicker((elapsed) {
+      var _newElapsed = _game.getElapsed();
+      if (_newElapsed.inSeconds > _elapsed.inSeconds) {
+        // just update timer once per second
+        setState(() {
+          _elapsed = _newElapsed;
+        });
+      }
+    });
+    _ticker.start();
   }
 
-  // @override
-  // void dispose() {
-  //   _ticker.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
