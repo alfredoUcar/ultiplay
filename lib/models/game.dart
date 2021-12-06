@@ -111,7 +111,13 @@ class Game {
     _endedAt = DateTime.now();
   }
 
-  Duration getElapsed() => DateTime.now().difference(_startedAt as DateTime);
+  Duration getElapsed({DateTime? at}) {
+    if (at == null) {
+      at = DateTime.now();
+    }
+
+    return at.difference(_startedAt as DateTime);
+  }
 
   bool onOffense() => _yourPosition == Position.offense;
   bool onDefense() => _yourPosition == Position.defense;

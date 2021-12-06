@@ -53,7 +53,7 @@ class _CurrentGame extends State<CurrentGame>
           children: [
             gameStatus(),
             Divider(thickness: 1.8),
-            gameTimeline(),
+            timeline(),
             currentStep(),
           ],
         ));
@@ -80,8 +80,7 @@ class _CurrentGame extends State<CurrentGame>
                   "${_game.yourScore} - ${_game.opponentScore}",
                   style: scoreBoardStyle,
                 ),
-                Text(
-                    "${_elapsed.inMinutes}:${_elapsed.inSeconds.remainder(60)}"),
+                Timestamp(elapsed: _elapsed),
               ],
             ),
           ),
@@ -97,7 +96,7 @@ class _CurrentGame extends State<CurrentGame>
     );
   }
 
-  Widget gameTimeline() {
+  Widget timeline() {
     if (_game.checkpoints.isEmpty) {
       return Container(
         child: Expanded(child: Center(child: Text('No actions performed yet'))),
@@ -107,9 +106,14 @@ class _CurrentGame extends State<CurrentGame>
         child: Expanded(
           child: ListView.separated(
               shrinkWrap: true,
+              reverse: true,
               itemBuilder: (context, index) {
+                var checkpoint = _game.checkpoints[index];
+                var elapsed = _game.getElapsed(at: checkpoint.timestamp);
                 return ListTile(
-                    title: Text(_game.checkpoints[index].toString()));
+                  title: Text(checkpoint.toString()),
+                  leading: Timestamp(elapsed: elapsed),
+                );
               },
               separatorBuilder: (_, __) => Divider(),
               itemCount: _game.checkpoints.length),
@@ -234,6 +238,31 @@ class _CurrentGame extends State<CurrentGame>
           ), // actions
         ],
       ),
+    );
+  }
+}
+
+class Timestamp extends StatelessWidget {
+  const Timestamp({
+    Key? key,
+    required Duration elapsed,
+  })  : _elapsed = elapsed,
+        super(key: key);
+
+  final Duration _elapsed;
+
+  @override
+  Widget build(BuildContext context) {
+    var minDigits = 2;
+    var padding = '0';
+    var minutes = _elapsed.inMinutes.toString().padLeft(minDigits, padding);
+    var seconds =
+        _elapsed.inSeconds.remainder(60).toString().padLeft(minDigits, padding);
+    return Column(
+      children: [
+        Icon(Icons.watch_later_outlined),
+        Text("$minutes:$seconds"),
+      ],
     );
   }
 }
