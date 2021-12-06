@@ -12,6 +12,8 @@ class AlreadyStarted implements Exception {}
 
 class AlreadyEnded implements Exception {}
 
+class MissingGenderRatio implements Exception {}
+
 class Checkpoint {
   DateTime _timestamp = DateTime.now();
   String _team;
@@ -55,8 +57,10 @@ class Game {
   bool _isPullTime = true;
   List<Checkpoint> _checkpoints = [];
 
-  /// [genderRatio] should be only defined on mixed [gender] games
-  GenderRatioRule? _genderRatio;
+  /// [genderRatioRule] should be only defined on mixed [gender] games
+  GenderRatioRule? _genderRule;
+  GenderRatio? _genderRatio; // only for rule A
+  FieldSide? _endzoneA; // only for rule B
 
   DateTime? _startedAt, _endedAt;
 
@@ -67,26 +71,29 @@ class Game {
     required FieldSide initialSide,
     Division division = Division.open,
     Modality modality = Modality.grass,
-    GenderRatioRule? genderRatio,
+    GenderRatioRule? genderRule,
+    GenderRatio? initialGenderRatio,
   })  : _yourTeamName = yourTeamName,
         _opponentTeamName = opponentTeamName,
         _division = division,
         _modality = modality,
-        _genderRatio = genderRatio,
+        _genderRule = genderRule,
+        _genderRatio = initialGenderRatio,
         _yourPosition = initialPosition,
         _yourSide = initialSide,
         assert(
 
             /// Validate that ratio is only defined on mixed games
             division == Division.mixed
-                ? genderRatio != null
-                : genderRatio == null);
+                ? genderRule != null
+                : genderRule == null);
 
   String get yourTeamName => _yourTeamName;
   FieldSide get yourTeamSide => _yourSide;
   String get opponentTeamName => _opponentTeamName;
   int get yourScore => _yourScore;
   int get opponentScore => _opponentScore;
+  int get _playedPoints => _yourScore + _opponentScore;
 
   void start() {
     if (_startedAt != null) {
@@ -122,6 +129,11 @@ class Game {
     }
 
     switchSide();
+
+    if (appliesGenderRuleA()) {
+      updateGenderRatio();
+    }
+
     _isPullTime = true;
   }
 
@@ -150,6 +162,51 @@ class Game {
       _yourSide = FieldSide.right;
     } else {
       _yourSide = FieldSide.left;
+    }
+  }
+
+  bool isMixed() {
+    return _division == Division.mixed;
+  }
+
+  /// Only when playing a mixed division game
+  bool appliesGenderRuleA() => _genderRule == GenderRatioRule.ruleA;
+  bool appliesGenderRuleB() => _genderRule == GenderRatioRule.ruleB;
+
+  /// Only with gender rule A
+  int getRequiredWomenOnLine() {
+    if (_genderRatio == null) {
+      throw MissingGenderRatio();
+    }
+
+    if (_genderRatio == GenderRatio.moreWomen) {
+      if (_modality == Modality.grass) {
+        return 4; // and 3 men
+      } else {
+        return 3; // and 2 men
+      }
+    }
+
+    /// GenderRatio.moreMen
+    if (_modality == Modality.grass) {
+      return 3; // and 4 men
+    } else {
+      return 2; // and 3 mens
+    }
+  }
+
+  /// Only with gender rule B
+  bool yourTeamChoosesGender() {
+    return _yourSide == _endzoneA;
+  }
+
+  void updateGenderRatio() {
+    if (_playedPoints == 1 || _playedPoints.isEven) {
+      if (_genderRatio == GenderRatio.moreMen) {
+        _genderRatio = GenderRatio.moreWomen;
+      } else {
+        _genderRatio = GenderRatio.moreMen;
+      }
     }
   }
 }

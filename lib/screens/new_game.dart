@@ -15,6 +15,8 @@ class NewGame extends StatefulWidget {
 
 class _NewGameState extends State<NewGame> {
   late Function onStart;
+  late TextEditingController mainTeamController;
+  late TextEditingController opponentTeamController;
 
   Game? _game;
   final _formKey = GlobalKey<FormState>();
@@ -24,9 +26,21 @@ class _NewGameState extends State<NewGame> {
   String _genderRule = GenderRatioRule.ruleA.toString();
   String _modality = Modality.grass.toString();
   String _genderRatio = GenderRatio.moreWomen.toString();
-  String? _mainTeam;
-  String? _opponentTeam;
   String? _endzoneASide = FieldSide.left.toString();
+
+  @override
+  void initState() {
+    mainTeamController = TextEditingController();
+    opponentTeamController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    mainTeamController.dispose();
+    opponentTeamController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,16 +90,12 @@ class _NewGameState extends State<NewGame> {
                 TextFormField(
                   decoration: InputDecoration(hintText: 'Your team'),
                   validator: nonEmptyTextValidator,
-                  onSaved: (String? value) {
-                    _mainTeam = value;
-                  },
+                  controller: mainTeamController,
                 ),
                 TextFormField(
                   decoration: InputDecoration(hintText: 'Opponent'),
                   validator: nonEmptyTextValidator,
-                  onSaved: (String? value) {
-                    _opponentTeam = value;
-                  },
+                  controller: opponentTeamController,
                 ),
                 modalityOptions(),
                 lineOptions(),
@@ -286,23 +296,32 @@ class _NewGameState extends State<NewGame> {
           .firstWhere((element) => element.toString() == _mainTeamPosition);
       FieldSide side = FieldSide.values
           .firstWhere((element) => element.toString() == _mainTeamSide);
+      Modality modality = Modality.values
+          .firstWhere((element) => element.toString() == _modality);
+
       if (_division == Division.mixed.toString()) {
-        GenderRatioRule ratio = GenderRatioRule.values
+        GenderRatioRule genderRule = GenderRatioRule.values
             .firstWhere((element) => element.toString() == _genderRule);
+        GenderRatio genderRatio = GenderRatio.values
+            .firstWhere((element) => element.toString() == _genderRatio);
+
         _game = new Game(
-          yourTeamName: _mainTeam ?? 'main team',
-          opponentTeamName: _opponentTeam ?? 'second team',
+          yourTeamName: mainTeamController.text,
+          opponentTeamName: opponentTeamController.text,
           initialPosition: position,
           initialSide: side,
           division: Division.mixed,
-          genderRatio: ratio,
+          genderRule: genderRule,
+          initialGenderRatio: genderRatio,
+          modality: modality,
         );
       } else {
         _game = new Game(
-          yourTeamName: _mainTeam ?? 'main team',
+          yourTeamName: mainTeamController.text,
           initialSide: side,
-          opponentTeamName: _opponentTeam ?? 'second team',
+          opponentTeamName: opponentTeamController.text,
           initialPosition: position,
+          modality: modality,
         );
       }
       onStart(_game);

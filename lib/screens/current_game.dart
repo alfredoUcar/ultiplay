@@ -127,6 +127,19 @@ class _CurrentGame extends State<CurrentGame>
     var sideMessage = _game.yourTeamSide == FieldSide.left
         ? "Your team plays on left side"
         : "Your team plays on right side";
+    String? genderRatioMessage;
+
+    if (_game.isMixed()) {
+      if (_game.appliesGenderRuleB()) {
+        genderRatioMessage = _game.yourTeamChoosesGender()
+            ? 'Your team chooses gender ratio'
+            : 'Opponent team chooses gender ratio';
+      } else if (_game.appliesGenderRuleA()) {
+        genderRatioMessage =
+            "Playing with ${_game.getRequiredWomenOnLine()} women";
+      }
+    }
+
     return Container(
       color: Colors.blue[50],
       child: Column(
@@ -141,7 +154,12 @@ class _CurrentGame extends State<CurrentGame>
           Text(
             sideMessage,
             style: TextStyle(color: Colors.grey),
-          ), // description
+          ),
+          if (genderRatioMessage != null)
+            Text(
+              genderRatioMessage,
+              style: TextStyle(color: Colors.grey),
+            ), // description
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Text('$team throws pull'),
