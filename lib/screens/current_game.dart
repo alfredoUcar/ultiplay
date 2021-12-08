@@ -125,9 +125,56 @@ class _CurrentGame extends State<CurrentGame>
   Widget currentStep() {
     if (_game.isPullTime()) {
       return pullStep();
+    } else if (_game.isOnCall()) {
+      return callStep();
     } else {
       return playOnStep();
     }
+  }
+
+  Widget callStep() {
+    return Container(
+      color: Colors.blue[50],
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: Text(
+              'On Call',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Text('not implemented yet'),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                    onPressed: null,
+                    style: ButtonStyle(),
+                    child: Text('Accepted')),
+                ElevatedButton(
+                    onPressed: null,
+                    style: ButtonStyle(),
+                    child: Text('Rejected')),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _game.discardCall();
+                      });
+                    },
+                    style: ButtonStyle(),
+                    child: Text('Cancel')),
+              ],
+            ),
+          ), // actions
+        ],
+      ),
+    );
   }
 
   Widget pullStep() {
@@ -232,6 +279,14 @@ class _CurrentGame extends State<CurrentGame>
                     },
                     style: ButtonStyle(),
                     child: Text('Turnover')),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _game.call();
+                      });
+                    },
+                    style: ButtonStyle(),
+                    child: Text('Call')),
                 ElevatedButton(onPressed: null, child: Text('Finish')),
               ],
             ),

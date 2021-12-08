@@ -64,6 +64,8 @@ class Game {
 
   DateTime? _startedAt, _endedAt;
 
+  bool _onCall = false;
+
   Game({
     required String yourTeamName,
     required String opponentTeamName,
@@ -215,4 +217,14 @@ class Game {
       }
     }
   }
+
+  void call() {
+    _onCall = true;
+  }
+
+  void discardCall() {
+    _onCall = false;
+  }
+
+  bool isOnCall() => _onCall;
 }
