@@ -1,6 +1,7 @@
+import 'checkpoint.dart';
+
 enum Position { offense, defense }
 enum Division { open, mixed, women, master, grandmaster }
-enum CheckpointType { goal, turnover, pull, call, custom }
 enum FieldSide { left, right }
 enum Modality { grass, beach, indoor }
 
@@ -13,37 +14,6 @@ class AlreadyStarted implements Exception {}
 class AlreadyEnded implements Exception {}
 
 class MissingGenderRatio implements Exception {}
-
-class Checkpoint {
-  DateTime _timestamp = DateTime.now();
-  String _team;
-  CheckpointType _type;
-  String? _notes;
-
-  Checkpoint(
-      {required String team, required CheckpointType type, String? notes})
-      : _team = team,
-        _type = type,
-        _notes = notes;
-
-  @override
-  String toString() {
-    switch (_type) {
-      case CheckpointType.goal:
-        return 'Goal from $_team';
-      case CheckpointType.pull:
-        return 'Pull from $_team';
-      case CheckpointType.turnover:
-        return 'Turnover while $_team on offense';
-      case CheckpointType.call:
-        return 'Call from $_team';
-      default:
-        return 'Checkpoint for $_team' + (_notes != null ? ': $_notes' : '');
-    }
-  }
-
-  DateTime get timestamp => _timestamp;
-}
 
 class Game {
   String _yourTeamName;
@@ -128,12 +98,16 @@ class Game {
   void goal() {
     if (onOffense()) {
       _yourScore++;
-      _checkpoints
-          .add(new Checkpoint(team: _yourTeamName, type: CheckpointType.goal));
+      _checkpoints.add(Goal(
+          team: _yourTeamName,
+          leftScore: _yourScore,
+          rightScore: _opponentScore));
     } else {
       _opponentScore++;
-      _checkpoints.add(
-          new Checkpoint(team: _opponentTeamName, type: CheckpointType.goal));
+      _checkpoints.add(Goal(
+          team: _opponentTeamName,
+          leftScore: _yourScore,
+          rightScore: _opponentScore));
     }
 
     switchSide();
@@ -147,19 +121,17 @@ class Game {
 
   void pull() {
     var pullFrom = onDefense() ? _yourTeamName : _opponentTeamName;
-    _checkpoints.add(new Checkpoint(team: pullFrom, type: CheckpointType.pull));
+    _checkpoints.add(Pull(team: pullFrom));
     _isPullTime = false;
   }
 
   void turnover() {
     if (onOffense()) {
       _yourPosition = Position.defense;
-      _checkpoints.add(
-          new Checkpoint(team: _yourTeamName, type: CheckpointType.turnover));
+      _checkpoints.add(Turnover(team: _yourTeamName));
     } else {
       _yourPosition = Position.offense;
-      _checkpoints.add(new Checkpoint(
-          team: _opponentTeamName, type: CheckpointType.turnover));
+      _checkpoints.add(Turnover(team: _opponentTeamName));
     }
   }
 
