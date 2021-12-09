@@ -209,7 +209,7 @@ class Game {
     endCall();
   }
 
-  void callRejected() {
+  void callContested() {
     _callInProgress!.accepted = false;
     endCall();
   }

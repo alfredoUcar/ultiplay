@@ -225,11 +225,11 @@ class _CurrentGame extends State<CurrentGame>
                 ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        _game.callRejected();
+                        _game.callContested();
                       });
                     },
                     style: ButtonStyle(),
-                    child: Text('Rejected')),
+                    child: Text('Contested')),
                 ElevatedButton(
                     onPressed: () {
                       setState(() {

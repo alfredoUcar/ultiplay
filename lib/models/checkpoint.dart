@@ -1,3 +1,6 @@
+import 'package:ultiplay/extensions/enum.dart';
+import 'package:ultiplay/extensions/string.dart';
+
 enum CheckpointType { goal, turnover, pull, call, custom }
 enum CallType {
   stall_out,
@@ -86,7 +89,21 @@ class Call extends Checkpoint {
   }) : super(team: team, type: CheckpointType.call, notes: notes);
 
   @override
-  String get description => 'Call from $team';
+  String get description {
+    var callName = callType != null
+        ? callType!.name.capitalize().replaceAll('_', ' ')
+        : null;
+    var call = callName != null ? '"$callName" call' : 'Call';
+
+    switch (accepted) {
+      case true:
+        return '$call from $team accepted';
+      case false:
+        return '$call from $team contested';
+      default:
+        return '$call from $team';
+    }
+  }
 }
 
 class Custom extends Checkpoint {
