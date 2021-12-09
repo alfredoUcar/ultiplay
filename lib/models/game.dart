@@ -34,7 +34,7 @@ class Game {
 
   DateTime? _startedAt, _endedAt;
 
-  bool _onCall = false;
+  Call? _callInProgress = null;
 
   Game({
     required String yourTeamName,
@@ -190,13 +190,36 @@ class Game {
     }
   }
 
+  Call? get callInProgress => _callInProgress;
+
   void call() {
-    _onCall = true;
+    _callInProgress = Call(team: yourTeamName);
   }
 
   void discardCall() {
-    _onCall = false;
+    _callInProgress = null;
   }
 
-  bool isOnCall() => _onCall;
+  void callIsAccepted(bool value) {
+    _callInProgress!.accepted = value;
+  }
+
+  void callAccepted() {
+    _callInProgress!.accepted = true;
+    endCall();
+  }
+
+  void callRejected() {
+    _callInProgress!.accepted = false;
+    endCall();
+  }
+
+  void endCall() {
+    if (_callInProgress != null) {
+      _checkpoints.add(_callInProgress!);
+      _callInProgress = null;
+    }
+  }
+
+  bool isOnCall() => _callInProgress != null;
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:ultiplay/extensions/enum.dart';
+import 'package:ultiplay/extensions/string.dart';
+import 'package:ultiplay/models/checkpoint.dart';
 import 'package:ultiplay/models/game.dart';
 
 class CurrentGame extends StatefulWidget {
@@ -146,7 +149,65 @@ class _CurrentGame extends State<CurrentGame>
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Text('not implemented yet'),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('From'),
+                    Radio(
+                        value: _game.yourTeamName,
+                        groupValue: _game.callInProgress?.team,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() {
+                              _game.callInProgress?.team = value;
+                            });
+                          }
+                        }),
+                    Text(_game.yourTeamName),
+                    Radio(
+                        value: _game.opponentTeamName,
+                        groupValue: _game.callInProgress?.team,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() {
+                              _game.callInProgress?.team = value;
+                            });
+                          }
+                        }),
+                    Text(_game.opponentTeamName),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text('Call type'),
+                    DropdownButton<CallType>(
+                        onChanged: (CallType? value) {
+                          setState(() {
+                            _game.callInProgress!.callType = value;
+                          });
+                        },
+                        value: _game.callInProgress!.callType,
+                        items: CallType.values
+                            .map((e) => DropdownMenuItem(
+                                  child: Text(
+                                      e.name.capitalize().replaceAll('_', ' ')),
+                                  value: e,
+                                ))
+                            .toList()),
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _game.callInProgress!.callType = null;
+                          });
+                        },
+                        icon: Icon(Icons.clear)),
+                  ],
+                )
+              ],
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 15.0),
@@ -154,11 +215,19 @@ class _CurrentGame extends State<CurrentGame>
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                    onPressed: null,
+                    onPressed: () {
+                      setState(() {
+                        _game.callAccepted();
+                      });
+                    },
                     style: ButtonStyle(),
                     child: Text('Accepted')),
                 ElevatedButton(
-                    onPressed: null,
+                    onPressed: () {
+                      setState(() {
+                        _game.callRejected();
+                      });
+                    },
                     style: ButtonStyle(),
                     child: Text('Rejected')),
                 ElevatedButton(
