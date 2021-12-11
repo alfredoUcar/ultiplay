@@ -34,7 +34,7 @@ class Game {
 
   DateTime? _startedAt, _endedAt;
 
-  Call? _callInProgress = null;
+  Call? _callInProgress;
 
   Game({
     required String yourTeamName,
