@@ -1,4 +1,4 @@
-package com.example.ultiplay
+package com.aucendo.ultiplay
 
 import io.flutter.embedding.android.FlutterActivity
 

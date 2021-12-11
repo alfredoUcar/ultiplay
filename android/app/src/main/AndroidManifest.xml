@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ultiplay">
+    package="com.aucendo.ultiplay">
    <application
         android:label="ultiplay"
         android:icon="@mipmap/ic_launcher">
