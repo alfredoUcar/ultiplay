@@ -20,27 +20,40 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Ultiplay'),
-        ),
-        body: Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Visibility(
-              visible: _currentGame != null,
-              child: OutlinedButton(
-                  child: Text('Continue game'),
-                  onPressed: () {
-                    openCurrentGame(context);
-                  }),
-            ),
-            OutlinedButton(
-                child: Text('New game'),
+      appBar: AppBar(
+        title: Text('Ultiplay'),
+      ),
+      body: Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          PlayedGames(playedGames: _playedGames),
+        ]),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Visibility(
+            visible: _currentGame != null,
+            child: FloatingActionButton(
+                heroTag: null,
+                child: Icon(Icons.play_arrow),
                 onPressed: () {
-                  openNewGameForm(context);
+                  openCurrentGame(context);
                 }),
-            PlayedGames(playedGames: _playedGames),
-          ]),
-        ));
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          FloatingActionButton(
+              heroTag: null,
+              child: Icon(Icons.add),
+              tooltip: 'New game',
+              onPressed: () {
+                openNewGameForm(context);
+              }),
+        ],
+      ),
+    );
   }
 
   void openNewGameForm(BuildContext context) {
