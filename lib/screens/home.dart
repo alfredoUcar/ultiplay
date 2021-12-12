@@ -14,6 +14,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Game? _currentGame;
+  List<Game> _playedGames = [];
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +42,30 @@ class _HomeState extends State<Home> {
   }
 
   void openNewGameForm(BuildContext context) {
-    Navigator.of(context).pushNamed(NewGame.routeName, arguments: (Game? game) {
-      setState(() {
-        _currentGame = game;
-        _currentGame!.start();
-      });
+    Navigator.of(context).pushNamed(NewGame.routeName,
+        arguments: NewGameArguments(startGameHandler, finishGameHandler));
+  }
+
+  startGameHandler(Game game) {
+    setState(() {
+      _currentGame = game;
+      _currentGame!.start();
     });
   }
 
+  finishGameHandler() {
+    if (_currentGame != null) {
+      setState(() {
+        _currentGame!.finish();
+        _playedGames.add(_currentGame as Game);
+        _currentGame = null;
+      });
+    }
+  }
+
   void openCurrentGame(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => CurrentGame(_currentGame as Game)));
+    Navigator.of(context).pushNamed(CurrentGame.routeName,
+        arguments:
+            CurrentGameArguments(finishGameHandler, _currentGame as Game));
   }
 }

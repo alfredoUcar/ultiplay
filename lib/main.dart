@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/screens/new_game.dart';
 
@@ -15,6 +16,7 @@ class Ultiplay extends StatelessWidget {
       routes: {
         Home.routeName: (context) => Home(),
         NewGame.routeName: (context) => NewGame(),
+        CurrentGame.routeName: (context) => CurrentGame(),
       },
     );
   }

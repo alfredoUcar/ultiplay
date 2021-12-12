@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:ultiplay/extensions/string.dart';
 import 'package:ultiplay/extensions/enum.dart';
 import 'package:ultiplay/models/game.dart';
-import 'current_game.dart';
+import 'package:ultiplay/screens/current_game.dart';
+
+class NewGameArguments {
+  void Function(Game) onStart;
+  void Function() onFinish;
+
+  NewGameArguments(this.onStart, this.onFinish);
+}
 
 class NewGame extends StatefulWidget {
   static const routeName = 'new-game';
@@ -14,7 +21,7 @@ class NewGame extends StatefulWidget {
 }
 
 class _NewGameState extends State<NewGame> {
-  late Function onStart;
+  late NewGameArguments _screenArguments;
   late TextEditingController mainTeamController;
   late TextEditingController opponentTeamController;
 
@@ -30,9 +37,9 @@ class _NewGameState extends State<NewGame> {
 
   @override
   void initState() {
+    super.initState();
     mainTeamController = TextEditingController();
     opponentTeamController = TextEditingController();
-    super.initState();
   }
 
   @override
@@ -44,7 +51,8 @@ class _NewGameState extends State<NewGame> {
 
   @override
   Widget build(BuildContext context) {
-    onStart = ModalRoute.of(context)!.settings.arguments as Function;
+    _screenArguments =
+        ModalRoute.of(context)!.settings.arguments as NewGameArguments;
 
     return Scaffold(
       appBar: AppBar(
@@ -71,7 +79,7 @@ class _NewGameState extends State<NewGame> {
             IconButton(
               onPressed: () {
                 Navigator.pushReplacementNamed(context, NewGame.routeName,
-                    arguments: onStart);
+                    arguments: _screenArguments);
               },
               icon: Icon(Icons.restart_alt),
               color: Colors.white,
@@ -324,7 +332,7 @@ class _NewGameState extends State<NewGame> {
           modality: modality,
         );
       }
-      onStart(_game);
+      _screenArguments.onStart(_game as Game);
       openNewGame(context);
     }
   }
@@ -356,7 +364,8 @@ class _NewGameState extends State<NewGame> {
 
   void openNewGame(BuildContext context) {
     Navigator.of(context).pop();
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => CurrentGame(_game as Game)));
+    Navigator.of(context).pushNamed(CurrentGame.routeName,
+        arguments:
+            CurrentGameArguments(_screenArguments.onFinish, _game as Game));
   }
 }

@@ -5,24 +5,28 @@ import 'package:ultiplay/extensions/string.dart';
 import 'package:ultiplay/models/checkpoint.dart';
 import 'package:ultiplay/models/game.dart';
 
-class CurrentGame extends StatefulWidget {
-  final Game game;
+class CurrentGameArguments {
+  void Function() onFinish;
+  Game game;
 
-  CurrentGame(this.game);
+  CurrentGameArguments(this.onFinish, this.game);
+}
+
+class CurrentGame extends StatefulWidget {
+  static const routeName = 'current-game';
 
   @override
   State<StatefulWidget> createState() {
-    return _CurrentGame(game);
+    return _CurrentGame();
   }
 }
 
 class _CurrentGame extends State<CurrentGame>
     with SingleTickerProviderStateMixin {
-  Game _game;
+  late Game _game;
   late final Ticker _ticker;
-  Duration _elapsed;
-
-  _CurrentGame(this._game) : _elapsed = _game.getElapsed();
+  late Duration _elapsed;
+  late Function() _finishGame;
 
   @override
   void initState() {
@@ -47,6 +51,12 @@ class _CurrentGame extends State<CurrentGame>
 
   @override
   Widget build(BuildContext context) {
+    var screenArguments =
+        ModalRoute.of(context)!.settings.arguments as CurrentGameArguments;
+    _game = screenArguments.game;
+    _elapsed = _game.getElapsed();
+    _finishGame = screenArguments.onFinish;
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -301,7 +311,7 @@ class _CurrentGame extends State<CurrentGame>
                     },
                     style: ButtonStyle(),
                     child: Text('Done')),
-                ElevatedButton(onPressed: null, child: Text('Finish')),
+                ElevatedButton(onPressed: () {}, child: Text('Finish')),
               ],
             ),
           ), // actions
@@ -356,7 +366,12 @@ class _CurrentGame extends State<CurrentGame>
                     },
                     style: ButtonStyle(),
                     child: Text('Call')),
-                ElevatedButton(onPressed: null, child: Text('Finish')),
+                ElevatedButton(
+                    onPressed: () {
+                      _finishGame();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Finish')),
               ],
             ),
           ), // actions
