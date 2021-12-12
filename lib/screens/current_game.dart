@@ -311,7 +311,7 @@ class _CurrentGame extends State<CurrentGame>
                     },
                     style: ButtonStyle(),
                     child: Text('Done')),
-                ElevatedButton(onPressed: () {}, child: Text('Finish')),
+                ElevatedButton(onPressed: finishGame, child: Text('Finish')),
               ],
             ),
           ), // actions
@@ -366,18 +366,18 @@ class _CurrentGame extends State<CurrentGame>
                     },
                     style: ButtonStyle(),
                     child: Text('Call')),
-                ElevatedButton(
-                    onPressed: () {
-                      _finishGame();
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Finish')),
+                ElevatedButton(onPressed: finishGame, child: Text('Finish')),
               ],
             ),
           ), // actions
         ],
       ),
     );
+  }
+
+  void finishGame() {
+    _finishGame();
+    Navigator.of(context).pop();
   }
 }
 
