@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/new_game.dart';
+import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
   static const routeName = 'home';
@@ -36,7 +37,8 @@ class _HomeState extends State<Home> {
                 child: Text('New game'),
                 onPressed: () {
                   openNewGameForm(context);
-                })
+                }),
+            PlayedGames(playedGames: _playedGames),
           ]),
         ));
   }
@@ -67,5 +69,49 @@ class _HomeState extends State<Home> {
     Navigator.of(context).pushNamed(CurrentGame.routeName,
         arguments:
             CurrentGameArguments(finishGameHandler, _currentGame as Game));
+  }
+}
+
+class PlayedGames extends StatelessWidget {
+  const PlayedGames({
+    Key? key,
+    required List<Game> playedGames,
+  })  : _playedGames = playedGames,
+        super(key: key);
+
+  final List<Game> _playedGames;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Expanded(
+        child: ListView.separated(
+          shrinkWrap: true,
+          itemBuilder: (BuildContext context, int index) {
+            var playedGame = _playedGames[index];
+            final DateFormat formatter = DateFormat.yMMMd().add_Hm();
+            var trophyColor = playedGame.yourScore > playedGame.opponentScore
+                ? Colors.amber.value
+                : Colors.grey.value;
+            return ListTile(
+              leading: Icon(Icons.emoji_events, color: Color(trophyColor)),
+              title: Text(
+                  '${playedGame.yourTeamName} vs ${playedGame.opponentTeamName}'),
+              subtitle: Row(
+                children: [
+                  Text(formatter.format(playedGame.startedAt as DateTime)),
+                ],
+              ),
+              trailing: Text(
+                '${playedGame.yourScore} - ${playedGame.opponentScore}',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              ),
+            );
+          },
+          itemCount: _playedGames.length,
+          separatorBuilder: (BuildContext context, int index) => Divider(),
+        ),
+      ),
+    );
   }
 }

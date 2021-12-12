@@ -66,6 +66,8 @@ class Game {
   int get yourScore => _yourScore;
   int get opponentScore => _opponentScore;
   int get _playedPoints => _yourScore + _opponentScore;
+  DateTime? get startedAt => _startedAt;
+  DateTime? get endedAt => _endedAt;
 
   void start() {
     if (_startedAt != null) {
