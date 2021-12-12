@@ -304,6 +304,8 @@ class _NewGameState extends State<NewGame> {
           .firstWhere((element) => element.toString() == _mainTeamPosition);
       FieldSide side = FieldSide.values
           .firstWhere((element) => element.toString() == _mainTeamSide);
+      FieldSide endzoneA = FieldSide.values
+          .firstWhere((element) => element.toString() == _endzoneASide);
       Modality modality = Modality.values
           .firstWhere((element) => element.toString() == _modality);
 
@@ -322,6 +324,7 @@ class _NewGameState extends State<NewGame> {
           genderRule: genderRule,
           initialGenderRatio: genderRatio,
           modality: modality,
+          endzoneA: endzoneA,
         );
       } else {
         _game = new Game(

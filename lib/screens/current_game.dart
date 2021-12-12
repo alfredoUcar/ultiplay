@@ -82,6 +82,7 @@ class _CurrentGame extends State<CurrentGame>
           _game.onOffense()
               ? Icon(Icons.circle, color: Colors.green)
               : Icon(Icons.circle_outlined, color: Colors.grey[400]),
+          SizedBox(width: 10),
           Text(
             _game.yourTeamName,
             style: teamNameStyle,
@@ -89,6 +90,10 @@ class _CurrentGame extends State<CurrentGame>
           Expanded(
             child: Column(
               children: [
+                Text(
+                  _game.isHalftimeReached() ? 'Second half' : 'First Half',
+                  style: TextStyle(color: Colors.grey),
+                ),
                 Text(
                   "${_game.yourScore} - ${_game.opponentScore}",
                   style: scoreBoardStyle,
@@ -101,6 +106,7 @@ class _CurrentGame extends State<CurrentGame>
             _game.opponentTeamName,
             style: teamNameStyle,
           ),
+          SizedBox(width: 10),
           _game.onDefense()
               ? Icon(Icons.circle, color: Colors.green)
               : Icon(Icons.circle_outlined, color: Colors.grey[400]),
@@ -311,10 +317,21 @@ class _CurrentGame extends State<CurrentGame>
                     },
                     style: ButtonStyle(),
                     child: Text('Done')),
+                Visibility(
+                  visible: !_game.isHalftimeReached(),
+                  child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _game.halfTime();
+                        });
+                      },
+                      style: ButtonStyle(),
+                      child: Text('Half Time')),
+                ),
                 ElevatedButton(onPressed: finishGame, child: Text('Finish')),
               ],
             ),
-          ), // actions
+          ),
         ],
       ),
     );

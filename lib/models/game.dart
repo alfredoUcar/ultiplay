@@ -15,6 +15,8 @@ class AlreadyEnded implements Exception {}
 
 class MissingGenderRatio implements Exception {}
 
+class HalfTimeAlreadyReached implements Exception {}
+
 class Game {
   String _yourTeamName;
   String _opponentTeamName;
@@ -25,6 +27,7 @@ class Game {
   int _yourScore = 0;
   int _opponentScore = 0;
   bool _isPullTime = true;
+  bool _halfTimeReached = false;
   List<Checkpoint> _checkpoints = [];
 
   /// [genderRatioRule] should be only defined on mixed [gender] games
@@ -45,6 +48,7 @@ class Game {
     Modality modality = Modality.grass,
     GenderRatioRule? genderRule,
     GenderRatio? initialGenderRatio,
+    FieldSide? endzoneA,
   })  : _yourTeamName = yourTeamName,
         _opponentTeamName = opponentTeamName,
         _division = division,
@@ -53,6 +57,7 @@ class Game {
         _genderRatio = initialGenderRatio,
         _yourPosition = initialPosition,
         _yourSide = initialSide,
+        _endzoneA = endzoneA,
         assert(
 
             /// Validate that ratio is only defined on mixed games
@@ -96,6 +101,7 @@ class Game {
   bool onOffense() => _yourPosition == Position.offense;
   bool onDefense() => _yourPosition == Position.defense;
   bool isPullTime() => _isPullTime;
+  bool isHalftimeReached() => _halfTimeReached;
 
   void goal() {
     if (onOffense()) {
@@ -179,6 +185,7 @@ class Game {
 
   /// Only with gender rule B
   bool yourTeamChoosesGender() {
+    print('${_yourSide.toString()}-${_endzoneA.toString()}');
     return _yourSide == _endzoneA;
   }
 
@@ -224,4 +231,22 @@ class Game {
   }
 
   bool isOnCall() => _callInProgress != null;
+
+  void halfTime() {
+    if (_halfTimeReached) {
+      throw HalfTimeAlreadyReached();
+    }
+
+    switchSide();
+
+    if (appliesGenderRuleB()) {
+      if (_endzoneA == FieldSide.left) {
+        _endzoneA = FieldSide.right;
+      } else {
+        _endzoneA = FieldSide.left;
+      }
+    }
+
+    _halfTimeReached = true;
+  }
 }
