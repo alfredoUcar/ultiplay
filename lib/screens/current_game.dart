@@ -328,6 +328,15 @@ class _CurrentGame extends State<CurrentGame>
                       style: ButtonStyle(),
                       child: Text('Half Time')),
                 ),
+                Visibility(
+                    visible: _game.checkpoints.isNotEmpty,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _game.undoLastCheckpoint();
+                          });
+                        },
+                        child: Text('Undo'))),
                 ElevatedButton(onPressed: finishGame, child: Text('Finish')),
               ],
             ),
@@ -383,6 +392,15 @@ class _CurrentGame extends State<CurrentGame>
                     },
                     style: ButtonStyle(),
                     child: Text('Call')),
+                Visibility(
+                    visible: _game.checkpoints.isNotEmpty,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _game.undoLastCheckpoint();
+                          });
+                        },
+                        child: Text('Undo'))),
                 ElevatedButton(onPressed: finishGame, child: Text('Finish')),
               ],
             ),

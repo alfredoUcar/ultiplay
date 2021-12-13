@@ -17,6 +17,8 @@ class MissingGenderRatio implements Exception {}
 
 class HalfTimeAlreadyReached implements Exception {}
 
+class AnyCheckpointAvailableToUndo implements Exception {}
+
 class Game {
   String _yourTeamName;
   String _opponentTeamName;
@@ -127,10 +129,30 @@ class Game {
     _isPullTime = true;
   }
 
+  void undoGoal(String fromTeam) {
+    if (fromTeam == yourTeamName) {
+      _yourScore--;
+    } else {
+      _opponentScore--;
+    }
+
+    switchSide();
+
+    if (appliesGenderRuleA()) {
+      updateGenderRatio();
+    }
+
+    _isPullTime = false;
+  }
+
   void pull() {
     var pullFrom = onDefense() ? _yourTeamName : _opponentTeamName;
     _checkpoints.add(Pull(team: pullFrom));
     _isPullTime = false;
+  }
+
+  void undoPull() {
+    _isPullTime = true;
   }
 
   void turnover() {
@@ -248,5 +270,21 @@ class Game {
     }
 
     _halfTimeReached = true;
+  }
+
+  void undoLastCheckpoint() {
+    if (checkpoints.isEmpty) {
+      throw AnyCheckpointAvailableToUndo();
+    }
+
+    var lastCheckpoint = checkpoints.last;
+
+    if (lastCheckpoint is Pull) {
+      undoPull();
+    } else if (lastCheckpoint is Goal) {
+      undoGoal(lastCheckpoint.team);
+    }
+
+    checkpoints.removeLast();
   }
 }
