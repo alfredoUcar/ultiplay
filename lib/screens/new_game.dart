@@ -152,6 +152,26 @@ class _NewGameState extends State<NewGame> {
         key: _formKey,
         child: Stepper(
           currentStep: _index,
+          controlsBuilder: (context, {onStepCancel, onStepContinue}) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  if (_index < _steps.length - 1)
+                    ElevatedButton(
+                      onPressed: onStepContinue,
+                      child: const Text('Next'),
+                    ),
+                  if (_index > 0)
+                    ElevatedButton(
+                      onPressed: onStepCancel,
+                      child: const Text('Previous'),
+                    ),
+                ],
+              ),
+            );
+          },
           onStepCancel: () {
             if (_index > 0) {
               setState(() {
