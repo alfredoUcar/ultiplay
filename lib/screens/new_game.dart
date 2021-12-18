@@ -173,18 +173,34 @@ class _NewGameState extends State<NewGame> {
             );
           },
           onStepCancel: () {
-            if (_index > 0) {
-              setState(() {
-                _index -= 1;
-              });
-            }
+            setState(() {
+              // search and apply previous non disabled step
+              var nextStepIndex = _index;
+              var nextStepState;
+              do {
+                nextStepIndex--;
+                nextStepState = _steps[nextStepIndex]['state'] as StepState;
+              } while (nextStepIndex < _steps.length &&
+                  nextStepState == StepState.disabled);
+              if (nextStepState != _steps.length) {
+                _index = nextStepIndex;
+              }
+            });
           },
           onStepContinue: () {
-            if (_index < _steps.length) {
-              setState(() {
-                _index += 1;
-              });
-            }
+            setState(() {
+              // search and apply next non disabled step
+              var nextStepIndex = _index;
+              var nextStepState;
+              do {
+                nextStepIndex++;
+                nextStepState = _steps[nextStepIndex]['state'] as StepState;
+              } while (nextStepIndex < _steps.length &&
+                  nextStepState == StepState.disabled);
+              if (nextStepState != _steps.length) {
+                _index = nextStepIndex;
+              }
+            });
           },
           onStepTapped: (int index) {
             setState(() {
