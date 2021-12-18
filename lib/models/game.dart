@@ -112,12 +112,14 @@ class Game {
           team: _yourTeamName,
           leftScore: _yourScore,
           rightScore: _opponentScore));
+      _yourPosition = Position.defense;
     } else {
       _opponentScore++;
       _checkpoints.add(Goal(
           team: _opponentTeamName,
           leftScore: _yourScore,
           rightScore: _opponentScore));
+      _yourPosition = Position.offense;
     }
 
     switchSide();
