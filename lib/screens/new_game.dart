@@ -34,6 +34,7 @@ class _NewGameState extends State<NewGame> {
   String _modality = Modality.grass.toString();
   String _genderRatio = GenderRatio.moreWomen.toString();
   String? _endzoneASide = FieldSide.left.toString();
+  int _index = 0;
 
   @override
   void initState() {
@@ -53,6 +54,59 @@ class _NewGameState extends State<NewGame> {
   Widget build(BuildContext context) {
     _screenArguments =
         ModalRoute.of(context)!.settings.arguments as NewGameArguments;
+    var _steps = [
+      {
+        'title': 'Teams',
+        'active': true,
+        'state': StepState.indexed,
+        'content': teams(),
+      },
+      {
+        'title': 'Division',
+        'active': true,
+        'state': StepState.indexed,
+        'content': divisionOptions(),
+      },
+      {
+        'title': 'Gender rule',
+        'active': _division == Division.mixed.toString(),
+        'state': _division == Division.mixed.toString()
+            ? StepState.indexed
+            : StepState.disabled,
+        'content': genderRatioRules(),
+      },
+      {
+        'title': 'Gender ratio',
+        'active': _division == Division.mixed.toString(),
+        'state': _division == Division.mixed.toString()
+            ? StepState.indexed
+            : StepState.disabled,
+        'content': Column(
+          children: [
+            genderRatioOptionsForRuleA(),
+            genderRatioOptionsForRuleB(),
+          ],
+        ),
+      },
+      {
+        'title': 'Modality',
+        'active': true,
+        'state': StepState.indexed,
+        'content': modalityOptions(),
+      },
+      {
+        'title': 'Your initial line',
+        'active': true,
+        'state': StepState.indexed,
+        'content': lineOptions(),
+      },
+      {
+        'title': 'Your initial field side',
+        'active': true,
+        'state': StepState.indexed,
+        'content': fieldSideOptions(),
+      },
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -88,33 +142,40 @@ class _NewGameState extends State<NewGame> {
         ),
         color: Colors.blue,
       ),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(hintText: 'Your team'),
-                  validator: nonEmptyTextValidator,
-                  controller: mainTeamController,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(hintText: 'Opponent'),
-                  validator: nonEmptyTextValidator,
-                  controller: opponentTeamController,
-                ),
-                modalityOptions(),
-                lineOptions(),
-                fieldSideOptions(),
-                divisionOptions(),
-                genderRatioRules(),
-                genderRatioOptionsForRuleA(),
-                genderRatioOptionsForRuleB(),
-              ],
-            ),
-          ),
+      body: Form(
+        key: _formKey,
+        child: Stepper(
+          currentStep: _index,
+          onStepCancel: () {
+            if (_index > 0) {
+              setState(() {
+                _index -= 1;
+              });
+            }
+          },
+          onStepContinue: () {
+            if (_index < _steps.length) {
+              setState(() {
+                _index += 1;
+              });
+            }
+          },
+          onStepTapped: (int index) {
+            setState(() {
+              _index = index;
+            });
+          },
+          steps: _steps.asMap().entries.map((entry) {
+            var index = entry.key;
+            var step = entry.value;
+            return Step(
+                state: index == _index
+                    ? StepState.editing
+                    : step['state'] as StepState,
+                isActive: step['active'] as bool,
+                title: Text(step['title'] as String),
+                content: step['content'] as Widget);
+          }).toList(),
         ),
       ),
     );
@@ -123,9 +184,6 @@ class _NewGameState extends State<NewGame> {
   Widget lineOptions() {
     return Column(
       children: [
-        ListTile(
-          title: Text('Your initial line'),
-        ),
         ...Position.values.asMap().entries.map((entry) {
           Position position = entry.value;
           return RadioListTile(
@@ -145,12 +203,35 @@ class _NewGameState extends State<NewGame> {
     );
   }
 
+  Widget teams() {
+    return Column(
+      children: [
+        TextFormField(
+          decoration: InputDecoration(hintText: 'Your team'),
+          validator: nonEmptyTextValidator,
+          controller: mainTeamController,
+        ),
+        TextFormField(
+          decoration: InputDecoration(hintText: 'Opponent'),
+          validator: (String? value) {
+            var error = nonEmptyTextValidator(value);
+            if (error != null) {
+              return error;
+            }
+            if (mainTeamController.text == opponentTeamController.text) {
+              return 'Teams should be different';
+            }
+            return null;
+          },
+          controller: opponentTeamController,
+        ),
+      ],
+    );
+  }
+
   Widget modalityOptions() {
     return Column(
       children: [
-        ListTile(
-          title: Text('Modality'),
-        ),
         ...Modality.values.asMap().entries.map((entry) {
           Modality modality = entry.value;
           return RadioListTile(
@@ -173,9 +254,6 @@ class _NewGameState extends State<NewGame> {
   Widget fieldSideOptions() {
     return Column(
       children: [
-        ListTile(
-          title: Text('Your initial side'),
-        ),
         ...FieldSide.values.asMap().entries.map((entry) {
           FieldSide side = entry.value;
           return RadioListTile(
@@ -198,9 +276,6 @@ class _NewGameState extends State<NewGame> {
   Widget divisionOptions() {
     return Column(
       children: [
-        ListTile(
-          title: Text('Division'),
-        ),
         ...Division.values.asMap().entries.map((entry) {
           Division division = entry.value;
           return RadioListTile(
@@ -277,9 +352,6 @@ class _NewGameState extends State<NewGame> {
       visible: _division == Division.mixed.toString(),
       child: Column(
         children: [
-          ListTile(
-            title: Text('Gender ratio'),
-          ),
           RadioListTile(
             title: Text('Rule A: prescribed'),
             value: GenderRatioRule.ruleA.toString(),
