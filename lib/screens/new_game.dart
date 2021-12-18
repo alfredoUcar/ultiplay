@@ -3,6 +3,7 @@ import 'package:ultiplay/extensions/string.dart';
 import 'package:ultiplay/extensions/enum.dart';
 import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/screens/current_game.dart';
+import 'package:multi_validator/multi_validator.dart';
 
 class NewGameArguments {
   void Function(Game) onStart;
@@ -24,6 +25,7 @@ class _NewGameState extends State<NewGame> {
   late NewGameArguments _screenArguments;
   late TextEditingController mainTeamController;
   late TextEditingController opponentTeamController;
+  late MultiValidator<String> _teamValidator;
 
   Game? _game;
   final _formKey = GlobalKey<FormState>();
@@ -41,6 +43,10 @@ class _NewGameState extends State<NewGame> {
     super.initState();
     mainTeamController = TextEditingController();
     opponentTeamController = TextEditingController();
+    _teamValidator = MultiValidator<String>([
+      nonEmptyTextValidator,
+      differentTeamsValidator,
+    ]);
   }
 
   @override
@@ -207,22 +213,15 @@ class _NewGameState extends State<NewGame> {
     return Column(
       children: [
         TextFormField(
+          autovalidateMode: AutovalidateMode.always,
           decoration: InputDecoration(hintText: 'Your team'),
-          validator: nonEmptyTextValidator,
+          validator: _teamValidator.validate,
           controller: mainTeamController,
         ),
         TextFormField(
+          autovalidateMode: AutovalidateMode.always,
           decoration: InputDecoration(hintText: 'Opponent'),
-          validator: (String? value) {
-            var error = nonEmptyTextValidator(value);
-            if (error != null) {
-              return error;
-            }
-            if (mainTeamController.text == opponentTeamController.text) {
-              return 'Teams should be different';
-            }
-            return null;
-          },
+          validator: _teamValidator.validate,
           controller: opponentTeamController,
         ),
       ],
@@ -433,6 +432,13 @@ class _NewGameState extends State<NewGame> {
   String? nonEmptyTextValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter some text';
+    }
+    return null;
+  }
+
+  String? differentTeamsValidator(String? value) {
+    if (mainTeamController.text == opponentTeamController.text) {
+      return 'Teams should be different';
     }
     return null;
   }
