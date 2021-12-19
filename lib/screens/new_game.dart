@@ -29,7 +29,7 @@ class _NewGameState extends State<NewGame> {
 
   Game? _game;
   final _formKey = GlobalKey<FormState>();
-  String _division = Division.open.toString();
+  Division? _division;
   String _mainTeamPosition = Position.offense.toString();
   String _mainTeamSide = FieldSide.left.toString();
   String _genderRule = GenderRatioRule.ruleA.toString();
@@ -75,16 +75,16 @@ class _NewGameState extends State<NewGame> {
       },
       {
         'title': 'Gender rule',
-        'active': _division == Division.mixed.toString(),
-        'state': _division == Division.mixed.toString()
+        'active': _division == Division.mixed,
+        'state': _division == Division.mixed
             ? StepState.indexed
             : StepState.disabled,
         'content': genderRatioRules(),
       },
       {
         'title': 'Gender ratio',
-        'active': _division == Division.mixed.toString(),
-        'state': _division == Division.mixed.toString()
+        'active': _division == Division.mixed,
+        'state': _division == Division.mixed
             ? StepState.indexed
             : StepState.disabled,
         'content': Column(
@@ -309,30 +309,49 @@ class _NewGameState extends State<NewGame> {
   }
 
   Widget divisionOptions() {
-    return Column(
-      children: [
-        ...Division.values.asMap().entries.map((entry) {
-          Division division = entry.value;
-          return RadioListTile(
-            title: Text(division.name.capitalize()),
-            value: division.toString(),
-            groupValue: _division,
-            onChanged: (String? newDivision) {
-              if (newDivision != null) {
-                setState(() {
-                  _division = newDivision;
-                });
-              }
-            },
-          );
-        }),
-      ],
+    return FormField(
+      initialValue: _division,
+      validator: selectValueRequired,
+      builder: (field) {
+        return Column(
+          children: [
+            ...Division.values.asMap().entries.map((entry) {
+              Division division = entry.value;
+              return RadioListTile(
+                title: Text(division.name.capitalize()),
+                value: division,
+                groupValue: field.value as Division?,
+                onChanged: (Division? newDivision) {
+                  if (newDivision != null) {
+                    setState(() {
+                      _division = newDivision;
+                      field.setValue(newDivision);
+                      field.validate();
+                    });
+                  }
+                },
+              );
+            }),
+            if (field.hasError)
+              Text(
+                field.errorText as String,
+                style: TextStyle(color: ThemeData().errorColor),
+              ),
+          ],
+        );
+      },
     );
+  }
+
+  String? selectValueRequired(value) {
+    if (value == null) {
+      return 'Select a value';
+    }
   }
 
   Widget genderRatioOptionsForRuleB() {
     return Visibility(
-      visible: _division == Division.mixed.toString() &&
+      visible: _division == Division.mixed &&
           _genderRule == GenderRatioRule.ruleB.toString(),
       child: Column(
         children: [
@@ -358,7 +377,7 @@ class _NewGameState extends State<NewGame> {
 
   Widget genderRatioOptionsForRuleA() {
     return Visibility(
-      visible: _division == Division.mixed.toString() &&
+      visible: _division == Division.mixed &&
           _genderRule == GenderRatioRule.ruleA.toString(),
       child: Column(
         children: [
@@ -384,7 +403,7 @@ class _NewGameState extends State<NewGame> {
 
   Widget genderRatioRules() {
     return Visibility(
-      visible: _division == Division.mixed.toString(),
+      visible: _division == Division.mixed,
       child: Column(
         children: [
           RadioListTile(
@@ -416,7 +435,7 @@ class _NewGameState extends State<NewGame> {
       Modality modality = Modality.values
           .firstWhere((element) => element.toString() == _modality);
 
-      if (_division == Division.mixed.toString()) {
+      if (_division == Division.mixed) {
         GenderRatioRule genderRule = GenderRatioRule.values
             .firstWhere((element) => element.toString() == _genderRule);
         GenderRatio genderRatio = GenderRatio.values
@@ -427,7 +446,7 @@ class _NewGameState extends State<NewGame> {
           opponentTeamName: opponentTeamController.text,
           initialPosition: position,
           initialSide: side,
-          division: Division.mixed,
+          division: _division as Division,
           genderRule: genderRule,
           initialGenderRatio: genderRatio,
           modality: modality,
@@ -436,9 +455,10 @@ class _NewGameState extends State<NewGame> {
       } else {
         _game = new Game(
           yourTeamName: mainTeamController.text,
-          initialSide: side,
           opponentTeamName: opponentTeamController.text,
           initialPosition: position,
+          initialSide: side,
+          division: _division as Division,
           modality: modality,
         );
       }
