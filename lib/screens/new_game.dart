@@ -32,10 +32,10 @@ class _NewGameState extends State<NewGame> {
   Division? _division;
   Position? _mainTeamPosition;
   FieldSide? _mainTeamSide;
-  String _genderRule = GenderRatioRule.ruleA.toString();
-  String _modality = Modality.grass.toString();
-  String _genderRatio = GenderRatio.moreWomen.toString();
-  String? _endzoneASide = FieldSide.left.toString();
+  GenderRatioRule? _genderRule;
+  Modality? _modality;
+  GenderRatio? _genderRatio;
+  FieldSide? _endzoneASide;
   int _index = 0;
 
   @override
@@ -271,24 +271,35 @@ class _NewGameState extends State<NewGame> {
   }
 
   Widget modalityOptions() {
-    return Column(
-      children: [
-        ...Modality.values.asMap().entries.map((entry) {
-          Modality modality = entry.value;
-          return RadioListTile(
-            title: Text(modality.name.capitalize()),
-            value: modality.toString(),
-            groupValue: _modality,
-            onChanged: (String? value) {
-              if (value != null) {
-                setState(() {
-                  _modality = value;
-                });
-              }
-            },
-          );
-        }),
-      ],
+    return FormField(
+      initialValue: _modality,
+      validator: selectValueRequired,
+      builder: (field) {
+        return Column(
+          children: [
+            ...Modality.values.asMap().entries.map((entry) {
+              Modality modality = entry.value;
+              return RadioListTile(
+                title: Text(modality.name.capitalize()),
+                value: modality,
+                groupValue: _modality,
+                onChanged: (Modality? value) {
+                  setState(() {
+                    _modality = value;
+                    field.setValue(value);
+                    field.validate();
+                  });
+                },
+              );
+            }),
+            if (field.hasError)
+              Text(
+                field.errorText as String,
+                style: TextStyle(color: ThemeData().errorColor),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -365,103 +376,98 @@ class _NewGameState extends State<NewGame> {
   }
 
   Widget genderRatioOptionsForRuleB() {
-    return Visibility(
-      visible: _division == Division.mixed &&
-          _genderRule == GenderRatioRule.ruleB.toString(),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text('Endzone A side'),
-          ),
-          RadioListTile(
-            title: Text('Left'),
-            value: FieldSide.left.toString(),
-            groupValue: _endzoneASide,
-            onChanged: updateEndzoneASide,
-          ),
-          RadioListTile(
-            title: Text('Right'),
-            value: FieldSide.right.toString(),
-            groupValue: _endzoneASide,
-            onChanged: updateEndzoneASide,
-          ),
-        ],
-      ),
+    return FormField(
+      initialValue: _endzoneASide,
+      builder: (field) {
+        return Column(
+          children: [
+            ListTile(
+              title: Text('Endzone A side'),
+            ),
+            RadioListTile(
+              title: Text('Left'),
+              value: FieldSide.left,
+              groupValue: _endzoneASide,
+              onChanged: updateEndzoneASide,
+            ),
+            RadioListTile(
+              title: Text('Right'),
+              value: FieldSide.right,
+              groupValue: _endzoneASide,
+              onChanged: updateEndzoneASide,
+            ),
+          ],
+        );
+      },
     );
   }
 
   Widget genderRatioOptionsForRuleA() {
-    return Visibility(
-      visible: _division == Division.mixed &&
-          _genderRule == GenderRatioRule.ruleA.toString(),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text('Starting with'),
-          ),
-          RadioListTile(
-            title: Text('More women'),
-            value: GenderRatio.moreWomen.toString(),
-            groupValue: _genderRatio,
-            onChanged: updateGenderRatio,
-          ),
-          RadioListTile(
-            title: Text('More men'),
-            value: GenderRatio.moreMen.toString(),
-            groupValue: _genderRatio,
-            onChanged: updateGenderRatio,
-          ),
-        ],
-      ),
+    return FormField(
+      initialValue: _genderRatio,
+      builder: (field) {
+        return Column(
+          children: [
+            ListTile(
+              title: Text('Starting with'),
+            ),
+            RadioListTile(
+              title: Text('More women'),
+              value: GenderRatio.moreWomen,
+              groupValue: _genderRatio,
+              onChanged: updateGenderRatio,
+            ),
+            RadioListTile(
+              title: Text('More men'),
+              value: GenderRatio.moreMen,
+              groupValue: _genderRatio,
+              onChanged: updateGenderRatio,
+            ),
+          ],
+        );
+      },
     );
   }
 
   Widget genderRatioRules() {
-    return Visibility(
-      visible: _division == Division.mixed,
-      child: Column(
-        children: [
-          RadioListTile(
-            title: Text('Rule A: prescribed'),
-            value: GenderRatioRule.ruleA.toString(),
-            groupValue: _genderRule,
-            onChanged: updateGenderRatioRule,
-          ),
-          RadioListTile(
-            title: Text('Rule B: end zone decides'),
-            value: GenderRatioRule.ruleB.toString(),
-            groupValue: _genderRule,
-            onChanged: updateGenderRatioRule,
-          ),
-        ],
-      ),
+    return FormField(
+      initialValue: _genderRule,
+      validator: selectValueRequired,
+      builder: (field) {
+        return Column(
+          children: [
+            RadioListTile(
+              title: Text('Rule A: prescribed'),
+              value: GenderRatioRule.ruleA,
+              groupValue: _genderRule,
+              onChanged: updateGenderRatioRule,
+            ),
+            RadioListTile(
+              title: Text('Rule B: end zone decides'),
+              value: GenderRatioRule.ruleB,
+              groupValue: _genderRule,
+              onChanged: updateGenderRatioRule,
+            ),
+          ],
+        );
+      },
     );
   }
 
   void onSubmit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      FieldSide endzoneA = FieldSide.values
-          .firstWhere((element) => element.toString() == _endzoneASide);
-      Modality modality = Modality.values
-          .firstWhere((element) => element.toString() == _modality);
-
       if (_division == Division.mixed) {
-        GenderRatioRule genderRule = GenderRatioRule.values
-            .firstWhere((element) => element.toString() == _genderRule);
-        GenderRatio genderRatio = GenderRatio.values
-            .firstWhere((element) => element.toString() == _genderRatio);
-
         _game = new Game(
           yourTeamName: mainTeamController.text,
           opponentTeamName: opponentTeamController.text,
           initialPosition: _mainTeamPosition as Position,
           initialSide: _mainTeamSide as FieldSide,
           division: _division as Division,
-          genderRule: genderRule,
-          initialGenderRatio: genderRatio,
-          modality: modality,
-          endzoneA: endzoneA,
+          genderRule: _genderRule,
+          initialGenderRatio: _genderRatio,
+          modality: _modality as Modality,
+          endzoneA: _endzoneASide,
         );
       } else {
         _game = new Game(
@@ -470,7 +476,7 @@ class _NewGameState extends State<NewGame> {
           initialPosition: _mainTeamPosition as Position,
           initialSide: _mainTeamSide as FieldSide,
           division: _division as Division,
-          modality: modality,
+          modality: _modality as Modality,
         );
       }
       _screenArguments.onStart(_game as Game);
@@ -478,21 +484,21 @@ class _NewGameState extends State<NewGame> {
     }
   }
 
-  void updateGenderRatioRule(String? value) {
+  void updateGenderRatioRule(GenderRatioRule? value) {
     setState(() {
-      _genderRule = value ?? GenderRatioRule.ruleA.toString();
+      _genderRule = value;
     });
   }
 
-  void updateGenderRatio(String? value) {
+  void updateGenderRatio(GenderRatio? value) {
     setState(() {
-      _genderRatio = value ?? GenderRatio.moreWomen.toString();
+      _genderRatio = value;
     });
   }
 
-  void updateEndzoneASide(String? value) {
+  void updateEndzoneASide(FieldSide? value) {
     setState(() {
-      _endzoneASide = value ?? FieldSide.left.toString();
+      _endzoneASide = value;
     });
   }
 
