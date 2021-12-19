@@ -481,6 +481,12 @@ class _NewGameState extends State<NewGame> {
       }
       _screenArguments.onStart(_game as Game);
       openNewGame(context);
+    } else {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        dismissDirection: DismissDirection.horizontal,
+        content: Text('Please review form'),
+      ));
     }
   }
 
