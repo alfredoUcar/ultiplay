@@ -61,7 +61,7 @@ class _NewGameState extends State<NewGame> {
     _screenArguments =
         ModalRoute.of(context)!.settings.arguments as NewGameArguments;
 
-    var teamsSubtitle = null;
+    var teamsSubtitle;
     if (mainTeamController.text.isNotEmpty &&
         opponentTeamController.text.isNotEmpty) {
       teamsSubtitle =
@@ -108,6 +108,7 @@ class _NewGameState extends State<NewGame> {
         break;
       default:
         genderRuleSubtitle = null;
+        genderRatioContent = Container();
     }
     var _steps = [
       {
@@ -265,10 +266,9 @@ class _NewGameState extends State<NewGame> {
                 state: index == _index
                     ? StepState.editing
                     : step['state'] as StepState,
-                subtitle:
-                    (step.containsKey('subtitle') && step['subtitle'] != null)
-                        ? Text(step['subtitle'] as String)
-                        : null,
+                subtitle: (step['subtitle'] != null)
+                    ? Text(step['subtitle'] as String)
+                    : null,
                 isActive: step['active'] as bool,
                 title: Text(step['title'] as String),
                 content: step['content'] as Widget);
