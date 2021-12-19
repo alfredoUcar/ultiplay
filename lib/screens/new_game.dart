@@ -60,21 +60,73 @@ class _NewGameState extends State<NewGame> {
   Widget build(BuildContext context) {
     _screenArguments =
         ModalRoute.of(context)!.settings.arguments as NewGameArguments;
+
+    var teamsSubtitle = null;
+    if (mainTeamController.text.isNotEmpty &&
+        opponentTeamController.text.isNotEmpty) {
+      teamsSubtitle =
+          '${mainTeamController.text} vs ${opponentTeamController.text}';
+    }
+
+    var genderRuleASubtitle;
+    switch (_genderRatio) {
+      case GenderRatio.moreMen:
+        genderRuleASubtitle = 'Starting with more men';
+        break;
+      case GenderRatio.moreWomen:
+        genderRuleASubtitle = 'Starting with more women';
+        break;
+      default:
+        genderRuleASubtitle = null;
+    }
+
+    var genderRuleBSubtitle;
+    switch (_endzoneASide) {
+      case FieldSide.left:
+        genderRuleBSubtitle = 'Endzone A is on the left field';
+        break;
+      case FieldSide.right:
+        genderRuleBSubtitle = 'Endzone A is on the right field';
+        break;
+      default:
+        genderRuleBSubtitle = null;
+    }
+
+    var genderRuleSubtitle;
+    var genderRatioContent;
+    var genderRatioSubtitle;
+    switch (_genderRule) {
+      case GenderRatioRule.ruleA:
+        genderRuleSubtitle = 'Rule A';
+        genderRatioContent = genderRatioOptionsForRuleA();
+        genderRatioSubtitle = genderRuleASubtitle;
+        break;
+      case GenderRatioRule.ruleB:
+        genderRuleSubtitle = 'Rule B';
+        genderRatioContent = genderRatioOptionsForRuleB();
+        genderRatioSubtitle = genderRuleBSubtitle;
+        break;
+      default:
+        genderRuleSubtitle = null;
+    }
     var _steps = [
       {
         'title': 'Teams',
+        'subtitle': teamsSubtitle,
         'active': true,
         'state': StepState.indexed,
         'content': teams(),
       },
       {
         'title': 'Division',
+        'subtitle': _division?.name.capitalize(),
         'active': true,
         'state': StepState.indexed,
         'content': divisionOptions(),
       },
       {
         'title': 'Gender rule',
+        'subtitle': genderRuleSubtitle,
         'active': _division == Division.mixed,
         'state': _division == Division.mixed
             ? StepState.indexed
@@ -83,31 +135,30 @@ class _NewGameState extends State<NewGame> {
       },
       {
         'title': 'Gender ratio',
+        'subtitle': genderRatioSubtitle,
         'active': _division == Division.mixed,
         'state': _division == Division.mixed
             ? StepState.indexed
             : StepState.disabled,
-        'content': Column(
-          children: [
-            genderRatioOptionsForRuleA(),
-            genderRatioOptionsForRuleB(),
-          ],
-        ),
+        'content': genderRatioContent,
       },
       {
         'title': 'Modality',
+        'subtitle': _modality?.name.capitalize(),
         'active': true,
         'state': StepState.indexed,
         'content': modalityOptions(),
       },
       {
         'title': 'Your initial line',
+        'subtitle': _mainTeamPosition?.name.capitalize(),
         'active': true,
         'state': StepState.indexed,
         'content': lineOptions(),
       },
       {
         'title': 'Your initial field side',
+        'subtitle': _mainTeamSide?.name.capitalize(),
         'active': true,
         'state': StepState.indexed,
         'content': fieldSideOptions(),
@@ -214,6 +265,10 @@ class _NewGameState extends State<NewGame> {
                 state: index == _index
                     ? StepState.editing
                     : step['state'] as StepState,
+                subtitle:
+                    (step.containsKey('subtitle') && step['subtitle'] != null)
+                        ? Text(step['subtitle'] as String)
+                        : null,
                 isActive: step['active'] as bool,
                 title: Text(step['title'] as String),
                 content: step['content'] as Widget);
