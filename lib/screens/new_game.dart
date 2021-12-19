@@ -31,7 +31,7 @@ class _NewGameState extends State<NewGame> {
   final _formKey = GlobalKey<FormState>();
   Division? _division;
   Position? _mainTeamPosition;
-  String _mainTeamSide = FieldSide.left.toString();
+  FieldSide? _mainTeamSide;
   String _genderRule = GenderRatioRule.ruleA.toString();
   String _modality = Modality.grass.toString();
   String _genderRatio = GenderRatio.moreWomen.toString();
@@ -293,24 +293,35 @@ class _NewGameState extends State<NewGame> {
   }
 
   Widget fieldSideOptions() {
-    return Column(
-      children: [
-        ...FieldSide.values.asMap().entries.map((entry) {
-          FieldSide side = entry.value;
-          return RadioListTile(
-            title: Text(side.name.capitalize()),
-            value: side.toString(),
-            groupValue: _mainTeamSide,
-            onChanged: (String? value) {
-              if (value != null) {
-                setState(() {
-                  _mainTeamSide = value;
-                });
-              }
-            },
-          );
-        }),
-      ],
+    return FormField(
+      initialValue: _mainTeamSide,
+      validator: selectValueRequired,
+      builder: (field) {
+        return Column(
+          children: [
+            ...FieldSide.values.asMap().entries.map((entry) {
+              FieldSide side = entry.value;
+              return RadioListTile(
+                title: Text(side.name.capitalize()),
+                value: side,
+                groupValue: _mainTeamSide,
+                onChanged: (FieldSide? value) {
+                  setState(() {
+                    _mainTeamSide = value;
+                    field.setValue(value);
+                    field.validate();
+                  });
+                },
+              );
+            }),
+            if (field.hasError)
+              Text(
+                field.errorText as String,
+                style: TextStyle(color: ThemeData().errorColor),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -430,8 +441,6 @@ class _NewGameState extends State<NewGame> {
   void onSubmit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      FieldSide side = FieldSide.values
-          .firstWhere((element) => element.toString() == _mainTeamSide);
       FieldSide endzoneA = FieldSide.values
           .firstWhere((element) => element.toString() == _endzoneASide);
       Modality modality = Modality.values
@@ -447,7 +456,7 @@ class _NewGameState extends State<NewGame> {
           yourTeamName: mainTeamController.text,
           opponentTeamName: opponentTeamController.text,
           initialPosition: _mainTeamPosition as Position,
-          initialSide: side,
+          initialSide: _mainTeamSide as FieldSide,
           division: _division as Division,
           genderRule: genderRule,
           initialGenderRatio: genderRatio,
@@ -459,7 +468,7 @@ class _NewGameState extends State<NewGame> {
           yourTeamName: mainTeamController.text,
           opponentTeamName: opponentTeamController.text,
           initialPosition: _mainTeamPosition as Position,
-          initialSide: side,
+          initialSide: _mainTeamSide as FieldSide,
           division: _division as Division,
           modality: modality,
         );
