@@ -255,13 +255,13 @@ class _NewGameState extends State<NewGame> {
     return Column(
       children: [
         TextFormField(
-          autovalidateMode: AutovalidateMode.always,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(hintText: 'Your team'),
           validator: _teamValidator.validate,
           controller: mainTeamController,
         ),
         TextFormField(
-          autovalidateMode: AutovalidateMode.always,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(hintText: 'Opponent'),
           validator: _teamValidator.validate,
           controller: opponentTeamController,
