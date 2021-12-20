@@ -21,12 +21,12 @@ class CurrentGame extends StatefulWidget {
   }
 }
 
-class _CurrentGame extends State<CurrentGame>
-    with SingleTickerProviderStateMixin {
+class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
   late Game _game;
   late final Ticker _ticker;
   late Duration _elapsed;
   late Function() _finishGame;
+  late TabController _tabController;
 
   @override
   void initState() {
@@ -41,12 +41,14 @@ class _CurrentGame extends State<CurrentGame>
       }
     });
     _ticker.start();
+    _tabController = TabController(initialIndex: 0, length: 2, vsync: this);
   }
 
   @override
   void dispose() {
     _ticker.dispose();
     super.dispose();
+    _tabController.dispose();
   }
 
   @override
@@ -58,18 +60,43 @@ class _CurrentGame extends State<CurrentGame>
     _finishGame = screenArguments.onFinish;
 
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text("Game"),
-        ),
-        body: Column(
-          children: [
-            gameStatus(),
-            Divider(thickness: 1.8),
-            timeline(),
-            currentStep(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Game"),
+      ),
+      bottomNavigationBar: Material(
+        color: Theme.of(context).colorScheme.primary,
+        child: TabBar(
+          controller: _tabController,
+          indicatorColor: Theme.of(context).colorScheme.secondary,
+          tabs: [
+            Tab(
+              icon: Icon(Icons.track_changes),
+              text: 'Track',
+            ),
+            Tab(
+              icon: Icon(Icons.history),
+              text: 'History',
+            ),
           ],
-        ));
+        ),
+      ),
+      body: Column(
+        children: [
+          gameStatus(),
+          Divider(thickness: 1.8),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                currentStep(),
+                timeline(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget gameStatus() {
