@@ -22,20 +22,35 @@ class NewGame extends StatefulWidget {
 }
 
 class _NewGameState extends State<NewGame> {
+  Game? _game;
   late NewGameArguments _screenArguments;
+
+  bool _teamsStepIsValid = true;
   late TextEditingController mainTeamController;
   late TextEditingController opponentTeamController;
   late MultiValidator<String> _teamValidator;
 
-  Game? _game;
   final _formKey = GlobalKey<FormState>();
+
   Division? _division;
+  bool _divisionStepIsValid = true;
+
   Position? _mainTeamPosition;
+  bool _positionStepIsValid = true;
+
   FieldSide? _mainTeamSide;
+  bool _mainTeamSideStepIsValid = true;
+
   GenderRatioRule? _genderRule;
+  bool _genderRuleStepIsValid = true;
+
   Modality? _modality;
+  bool _modalityStepIsValid = true;
+
   GenderRatio? _genderRatio;
   FieldSide? _endzoneASide;
+  bool _genderRatioStepIsValid = true;
+
   int _index = 0;
 
   @override
@@ -86,6 +101,7 @@ class _NewGameState extends State<NewGame> {
         'subtitle': getTeamsSubtitle(),
         'active': true,
         'state': StepState.indexed,
+        'is_valid': _teamsStepIsValid,
         'content': teams(),
       },
       {
@@ -93,6 +109,7 @@ class _NewGameState extends State<NewGame> {
         'subtitle': _division?.name.capitalize(),
         'active': true,
         'state': StepState.indexed,
+        'is_valid': _divisionStepIsValid,
         'content': divisionOptions(),
       },
       {
@@ -102,15 +119,17 @@ class _NewGameState extends State<NewGame> {
         'state': _division == Division.mixed
             ? StepState.indexed
             : StepState.disabled,
+        'is_valid': _genderRuleStepIsValid,
         'content': genderRatioRules(),
       },
       {
         'title': 'Gender ratio',
         'subtitle': genderRatioSubtitle,
-        'active': _division == Division.mixed,
+        'active': _division == Division.mixed && _genderRule != null,
         'state': _division == Division.mixed && _genderRule != null
             ? StepState.indexed
             : StepState.disabled,
+        'is_valid': _genderRatioStepIsValid,
         'content': genderRatioContent,
       },
       {
@@ -118,6 +137,7 @@ class _NewGameState extends State<NewGame> {
         'subtitle': _modality?.name.capitalize(),
         'active': true,
         'state': StepState.indexed,
+        'is_valid': _modalityStepIsValid,
         'content': modalityOptions(),
       },
       {
@@ -125,6 +145,7 @@ class _NewGameState extends State<NewGame> {
         'subtitle': _mainTeamPosition?.name.capitalize(),
         'active': true,
         'state': StepState.indexed,
+        'is_valid': _positionStepIsValid,
         'content': lineOptions(),
       },
       {
@@ -132,7 +153,7 @@ class _NewGameState extends State<NewGame> {
         'subtitle': _mainTeamSide?.name.capitalize(),
         'active': true,
         'state': StepState.indexed,
-        'is_valid': true,
+        'is_valid': _mainTeamSideStepIsValid,
         'content': fieldSideOptions(),
       },
     ];
@@ -235,10 +256,23 @@ class _NewGameState extends State<NewGame> {
           steps: _steps.asMap().entries.map((entry) {
             var index = entry.key;
             var step = entry.value;
+            var state;
+            if (index == _index) {
+              // current step
+              state = StepState.editing;
+            } else if (index > _index) {
+              // next steps
+              state = step['state'] as StepState;
+            } else {
+              // previous steps
+              if (step['is_valid'] as bool) {
+                state = StepState.complete;
+              } else {
+                state = StepState.error;
+              }
+            }
             return Step(
-                state: index == _index
-                    ? StepState.editing
-                    : step['state'] as StepState,
+                state: state,
                 subtitle: (step['subtitle'] != null)
                     ? Text(step['subtitle'] as String)
                     : null,
@@ -294,7 +328,13 @@ class _NewGameState extends State<NewGame> {
   Widget lineOptions() {
     return FormField(
       initialValue: _mainTeamPosition,
-      validator: selectValueRequired,
+      validator: (value) {
+        var error = selectValueRequired(value);
+        setState(() {
+          _positionStepIsValid = (error == null);
+        });
+        return error;
+      },
       builder: (field) {
         return Column(
           children: [
@@ -325,13 +365,21 @@ class _NewGameState extends State<NewGame> {
         TextFormField(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(hintText: 'Your team'),
-          validator: _teamValidator.validate,
+          validator: (value) {
+            var error = _teamValidator.validate(value);
+            _teamsStepIsValid = (error == null);
+            return error;
+          },
           controller: mainTeamController,
         ),
         TextFormField(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(hintText: 'Opponent'),
-          validator: _teamValidator.validate,
+          validator: (value) {
+            var error = _teamValidator.validate(value);
+            _teamsStepIsValid = (error == null) && _teamsStepIsValid;
+            return error;
+          },
           controller: opponentTeamController,
         ),
       ],
@@ -341,7 +389,13 @@ class _NewGameState extends State<NewGame> {
   Widget modalityOptions() {
     return FormField(
       initialValue: _modality,
-      validator: selectValueRequired,
+      validator: (value) {
+        var error = selectValueRequired(value);
+        setState(() {
+          _modalityStepIsValid = (error == null);
+        });
+        return error;
+      },
       builder: (field) {
         return Column(
           children: [
@@ -374,7 +428,13 @@ class _NewGameState extends State<NewGame> {
   Widget fieldSideOptions() {
     return FormField(
       initialValue: _mainTeamSide,
-      validator: selectValueRequired,
+      validator: (value) {
+        var error = selectValueRequired(value);
+        setState(() {
+          _mainTeamSideStepIsValid = (error == null);
+        });
+        return error;
+      },
       builder: (field) {
         return Column(
           children: [
@@ -407,7 +467,13 @@ class _NewGameState extends State<NewGame> {
   Widget divisionOptions() {
     return FormField(
       initialValue: _division,
-      validator: selectValueRequired,
+      validator: (value) {
+        var error = selectValueRequired(value);
+        setState(() {
+          _divisionStepIsValid = (error == null);
+        });
+        return error;
+      },
       builder: (field) {
         return Column(
           children: [
@@ -446,6 +512,16 @@ class _NewGameState extends State<NewGame> {
   Widget genderRatioOptionsForRuleB() {
     return FormField(
       initialValue: _endzoneASide,
+      validator: (value) {
+        if (_genderRule != GenderRatioRule.ruleB) {
+          return null;
+        }
+        var error = selectValueRequired(value);
+        setState(() {
+          _genderRatioStepIsValid = (error == null);
+        });
+        return error;
+      },
       builder: (field) {
         return Column(
           children: [
@@ -473,6 +549,16 @@ class _NewGameState extends State<NewGame> {
   Widget genderRatioOptionsForRuleA() {
     return FormField(
       initialValue: _genderRatio,
+      validator: (value) {
+        if (_genderRule != GenderRatioRule.ruleA) {
+          return null;
+        }
+        var error = selectValueRequired(value);
+        setState(() {
+          _genderRatioStepIsValid = (error == null);
+        });
+        return error;
+      },
       builder: (field) {
         return Column(
           children: [
@@ -500,7 +586,16 @@ class _NewGameState extends State<NewGame> {
   Widget genderRatioRules() {
     return FormField(
       initialValue: _genderRule,
-      validator: selectValueRequired,
+      validator: (value) {
+        if (_division != Division.mixed) {
+          return null;
+        }
+        var error = selectValueRequired(value);
+        setState(() {
+          _genderRuleStepIsValid = (error == null);
+        });
+        return error;
+      },
       builder: (field) {
         return Column(
           children: [
