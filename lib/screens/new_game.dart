@@ -198,7 +198,6 @@ class _NewGameState extends State<NewGame> {
             ),
           ],
         ),
-        color: Colors.blue,
       ),
       body: Form(
         key: _formKey,
