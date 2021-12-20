@@ -138,7 +138,7 @@ class _NewGameState extends State<NewGame> {
         'title': 'Gender ratio',
         'subtitle': genderRatioSubtitle,
         'active': _division == Division.mixed,
-        'state': _division == Division.mixed
+        'state': _division == Division.mixed && _genderRule != null
             ? StepState.indexed
             : StepState.disabled,
         'content': genderRatioContent,
