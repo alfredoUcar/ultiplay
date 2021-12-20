@@ -61,37 +61,6 @@ class _NewGameState extends State<NewGame> {
     _screenArguments =
         ModalRoute.of(context)!.settings.arguments as NewGameArguments;
 
-    var teamsSubtitle;
-    if (mainTeamController.text.isNotEmpty &&
-        opponentTeamController.text.isNotEmpty) {
-      teamsSubtitle =
-          '${mainTeamController.text} vs ${opponentTeamController.text}';
-    }
-
-    var genderRuleASubtitle;
-    switch (_genderRatio) {
-      case GenderRatio.moreMen:
-        genderRuleASubtitle = 'Starting with more men';
-        break;
-      case GenderRatio.moreWomen:
-        genderRuleASubtitle = 'Starting with more women';
-        break;
-      default:
-        genderRuleASubtitle = null;
-    }
-
-    var genderRuleBSubtitle;
-    switch (_endzoneASide) {
-      case FieldSide.left:
-        genderRuleBSubtitle = 'Endzone A is on the left field';
-        break;
-      case FieldSide.right:
-        genderRuleBSubtitle = 'Endzone A is on the right field';
-        break;
-      default:
-        genderRuleBSubtitle = null;
-    }
-
     var genderRuleSubtitle;
     var genderRatioContent;
     var genderRatioSubtitle;
@@ -99,21 +68,22 @@ class _NewGameState extends State<NewGame> {
       case GenderRatioRule.ruleA:
         genderRuleSubtitle = 'Rule A';
         genderRatioContent = genderRatioOptionsForRuleA();
-        genderRatioSubtitle = genderRuleASubtitle;
+        genderRatioSubtitle = getSubtitleForGenderRuleA();
         break;
       case GenderRatioRule.ruleB:
         genderRuleSubtitle = 'Rule B';
         genderRatioContent = genderRatioOptionsForRuleB();
-        genderRatioSubtitle = genderRuleBSubtitle;
+        genderRatioSubtitle = getSubtitleForGenderRuleB();
         break;
       default:
         genderRuleSubtitle = null;
         genderRatioContent = Container();
     }
+
     var _steps = [
       {
         'title': 'Teams',
-        'subtitle': teamsSubtitle,
+        'subtitle': getTeamsSubtitle(),
         'active': true,
         'state': StepState.indexed,
         'content': teams(),
@@ -275,6 +245,46 @@ class _NewGameState extends State<NewGame> {
         ),
       ),
     );
+  }
+
+  String? getTeamsSubtitle() {
+    String? teamsSubtitle;
+    if (mainTeamController.text.isNotEmpty &&
+        opponentTeamController.text.isNotEmpty) {
+      teamsSubtitle =
+          '${mainTeamController.text} vs ${opponentTeamController.text}';
+    }
+    return teamsSubtitle;
+  }
+
+  String? getSubtitleForGenderRuleB() {
+    String? genderRuleBSubtitle;
+    switch (_endzoneASide) {
+      case FieldSide.left:
+        genderRuleBSubtitle = 'Endzone A is on the left field';
+        break;
+      case FieldSide.right:
+        genderRuleBSubtitle = 'Endzone A is on the right field';
+        break;
+      default:
+        genderRuleBSubtitle = null;
+    }
+    return genderRuleBSubtitle;
+  }
+
+  String? getSubtitleForGenderRuleA() {
+    String? genderRuleASubtitle;
+    switch (_genderRatio) {
+      case GenderRatio.moreMen:
+        genderRuleASubtitle = 'Starting with more men';
+        break;
+      case GenderRatio.moreWomen:
+        genderRuleASubtitle = 'Starting with more women';
+        break;
+      default:
+        genderRuleASubtitle = null;
+    }
+    return genderRuleASubtitle;
   }
 
   Widget lineOptions() {
