@@ -132,9 +132,12 @@ class _NewGameState extends State<NewGame> {
         'subtitle': _mainTeamSide?.name.capitalize(),
         'active': true,
         'state': StepState.indexed,
+        'is_valid': true,
         'content': fieldSideOptions(),
       },
     ];
+
+    bool isInLastStep() => _index == _steps.length - 1;
 
     return Scaffold(
       appBar: AppBar(
@@ -142,8 +145,9 @@ class _NewGameState extends State<NewGame> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: onSubmit,
+        onPressed: (isInLastStep()) ? onSubmit : requireToCompleteAllSteps,
         child: Icon(Icons.play_arrow),
+        backgroundColor: !isInLastStep() ? ThemeData().disabledColor : null,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
@@ -552,6 +556,12 @@ class _NewGameState extends State<NewGame> {
         content: Text('Please review form'),
       ));
     }
+  }
+
+  void requireToCompleteAllSteps() {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Complete all steps')));
   }
 
   void updateGenderRatioRule(GenderRatioRule? value) {
