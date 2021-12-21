@@ -64,6 +64,23 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
         centerTitle: true,
         title: Text("Game"),
       ),
+      floatingActionButtonLocation: (_tabController.index == 0)
+          ? FloatingActionButtonLocation.endDocked
+          : FloatingActionButtonLocation.endFloat,
+      floatingActionButton: (_tabController.index == 0)
+          ? FloatingActionButton(
+              backgroundColor: Colors.red[700],
+              child: Icon(Icons.exit_to_app),
+              onPressed: finishGame,
+            )
+          : FloatingActionButton(
+              child: Icon(Icons.undo),
+              onPressed: () {
+                setState(() {
+                  _game.undoLastCheckpoint();
+                });
+              },
+            ),
       bottomNavigationBar: Material(
         color: Theme.of(context).colorScheme.primary,
         child: TabBar(
@@ -349,16 +366,6 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
                       style: ButtonStyle(),
                       child: Text('Half Time')),
                 ),
-                Visibility(
-                    visible: _game.checkpoints.isNotEmpty,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _game.undoLastCheckpoint();
-                          });
-                        },
-                        child: Text('Undo'))),
-                ElevatedButton(onPressed: finishGame, child: Text('Finish')),
               ],
             ),
           ),
@@ -414,16 +421,6 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
                   },
                   style: ButtonStyle(),
                   child: Text('Call')),
-              Visibility(
-                  visible: _game.checkpoints.isNotEmpty,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _game.undoLastCheckpoint();
-                        });
-                      },
-                      child: Text('Undo'))),
-              ElevatedButton(onPressed: finishGame, child: Text('Finish')),
             ],
           ),
         ), // actions
