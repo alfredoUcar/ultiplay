@@ -175,77 +175,82 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
   Widget callStep() {
     return Column(
       children: [
-        Padding(
-          padding: EdgeInsets.only(top: 10.0),
-          child: Text(
-            'On Call',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: Text(
+              'On Call',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
+        Expanded(
+          flex: 2,
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('From'),
-                  Radio(
-                      value: _game.yourTeamName,
-                      groupValue: _game.callInProgress?.team,
-                      onChanged: (String? value) {
-                        if (value != null) {
-                          setState(() {
-                            _game.callInProgress?.team = value;
-                          });
-                        }
-                      }),
-                  Text(_game.yourTeamName),
-                  Radio(
-                      value: _game.opponentTeamName,
-                      groupValue: _game.callInProgress?.team,
-                      onChanged: (String? value) {
-                        if (value != null) {
-                          setState(() {
-                            _game.callInProgress?.team = value;
-                          });
-                        }
-                      }),
-                  Text(_game.opponentTeamName),
-                ],
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('From'),
+                    Radio(
+                        value: _game.yourTeamName,
+                        groupValue: _game.callInProgress?.team,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() {
+                              _game.callInProgress?.team = value;
+                            });
+                          }
+                        }),
+                    Text(_game.yourTeamName),
+                    Radio(
+                        value: _game.opponentTeamName,
+                        groupValue: _game.callInProgress?.team,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() {
+                              _game.callInProgress?.team = value;
+                            });
+                          }
+                        }),
+                    Text(_game.opponentTeamName),
+                  ],
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text('Call type'),
-                  DropdownButton<CallType>(
-                      onChanged: (CallType? value) {
-                        setState(() {
-                          _game.callInProgress!.callType = value;
-                        });
-                      },
-                      value: _game.callInProgress!.callType,
-                      items: CallType.values
-                          .map((e) => DropdownMenuItem(
-                                child: Text(
-                                    e.name.capitalize().replaceAll('_', ' ')),
-                                value: e,
-                              ))
-                          .toList()),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _game.callInProgress!.callType = null;
-                        });
-                      },
-                      icon: Icon(Icons.clear)),
-                ],
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text('Call type'),
+                    DropdownButton<CallType>(
+                        onChanged: (CallType? value) {
+                          setState(() {
+                            _game.callInProgress!.callType = value;
+                          });
+                        },
+                        value: _game.callInProgress!.callType,
+                        items: CallType.values
+                            .map((e) => DropdownMenuItem(
+                                  child: Text(
+                                      e.name.capitalize().replaceAll('_', ' ')),
+                                  value: e,
+                                ))
+                            .toList()),
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _game.callInProgress!.callType = null;
+                          });
+                        },
+                        icon: Icon(Icons.clear)),
+                  ],
+                ),
               )
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 15.0),
+        Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -300,61 +305,62 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
 
     return Column(
       children: [
-        Padding(
-          padding: EdgeInsets.only(top: 10.0),
-          child: Text(
-            'Pull time',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: Text(
+              'Pull time',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ),
         ), // title
-        Text(
-          sideMessage,
-          style: TextStyle(color: Colors.grey),
-        ),
-        if (genderRatioMessage != null)
-          Text(
-            genderRatioMessage,
-            style: TextStyle(color: Colors.grey),
-          ), // description
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
-          child: Text('$team throws pull'),
-        ), // description
-        Padding(
-          padding: const EdgeInsets.only(bottom: 15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        Expanded(
+          child: Column(
             children: [
-              ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _game.pull();
-                    });
-                  },
-                  style: ButtonStyle(),
-                  child: Text('Done')),
-              Visibility(
-                visible: !_game.isHalftimeReached(),
-                child: ElevatedButton(
+              if (genderRatioMessage != null)
+                Text(genderRatioMessage), // description
+              Text(sideMessage),
+              Text('$team throws pull')
+            ],
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        _game.halfTime();
+                        _game.pull();
                       });
                     },
                     style: ButtonStyle(),
-                    child: Text('Half Time')),
-              ),
-              Visibility(
-                  visible: _game.checkpoints.isNotEmpty,
+                    child: Text('Done')),
+                Visibility(
+                  visible: !_game.isHalftimeReached(),
                   child: ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          _game.undoLastCheckpoint();
+                          _game.halfTime();
                         });
                       },
-                      child: Text('Undo'))),
-              ElevatedButton(onPressed: finishGame, child: Text('Finish')),
-            ],
+                      style: ButtonStyle(),
+                      child: Text('Half Time')),
+                ),
+                Visibility(
+                    visible: _game.checkpoints.isNotEmpty,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _game.undoLastCheckpoint();
+                          });
+                        },
+                        child: Text('Undo'))),
+                ElevatedButton(onPressed: finishGame, child: Text('Finish')),
+              ],
+            ),
           ),
         ),
       ],
@@ -365,19 +371,22 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
     var team = _game.onOffense() ? _game.yourTeamName : _game.opponentTeamName;
     return Column(
       children: [
-        Padding(
-          padding: EdgeInsets.only(top: 10.0),
-          child: Text(
-            'Play On',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: Text(
+              'Play On',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ),
         ), // title
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
-          child: Text('$team on offense'),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Text('$team on offense'),
+          ),
         ), // description
-        Padding(
-          padding: const EdgeInsets.only(bottom: 15.0),
+        Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
