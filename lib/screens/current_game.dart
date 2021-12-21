@@ -144,9 +144,7 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
 
   Widget timeline() {
     if (_game.checkpoints.isEmpty) {
-      return Container(
-        child: Expanded(child: Center(child: Text('No actions performed yet'))),
-      );
+      return Center(child: Text('No actions performed yet'));
     } else {
       return ListView.separated(
           shrinkWrap: true,
