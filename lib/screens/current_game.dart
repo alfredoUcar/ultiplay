@@ -69,7 +69,6 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
           : FloatingActionButtonLocation.endFloat,
       floatingActionButton: (_tabController.index == 0)
           ? FloatingActionButton(
-              backgroundColor: Colors.red[700],
               child: Icon(Icons.exit_to_app),
               onPressed: finishGame,
             )
