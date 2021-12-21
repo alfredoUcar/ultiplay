@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/screens/new_game.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(Ultiplay());
 }
 
