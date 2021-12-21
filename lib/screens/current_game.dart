@@ -173,113 +173,110 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
   }
 
   Widget callStep() {
-    return Container(
-      color: Colors.blue[50],
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: Text(
-              'On Call',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 10.0),
+          child: Text(
+            'On Call',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('From'),
-                    Radio(
-                        value: _game.yourTeamName,
-                        groupValue: _game.callInProgress?.team,
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            setState(() {
-                              _game.callInProgress?.team = value;
-                            });
-                          }
-                        }),
-                    Text(_game.yourTeamName),
-                    Radio(
-                        value: _game.opponentTeamName,
-                        groupValue: _game.callInProgress?.team,
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            setState(() {
-                              _game.callInProgress?.team = value;
-                            });
-                          }
-                        }),
-                    Text(_game.opponentTeamName),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text('Call type'),
-                    DropdownButton<CallType>(
-                        onChanged: (CallType? value) {
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('From'),
+                  Radio(
+                      value: _game.yourTeamName,
+                      groupValue: _game.callInProgress?.team,
+                      onChanged: (String? value) {
+                        if (value != null) {
                           setState(() {
-                            _game.callInProgress!.callType = value;
+                            _game.callInProgress?.team = value;
                           });
-                        },
-                        value: _game.callInProgress!.callType,
-                        items: CallType.values
-                            .map((e) => DropdownMenuItem(
-                                  child: Text(
-                                      e.name.capitalize().replaceAll('_', ' ')),
-                                  value: e,
-                                ))
-                            .toList()),
-                    IconButton(
-                        onPressed: () {
+                        }
+                      }),
+                  Text(_game.yourTeamName),
+                  Radio(
+                      value: _game.opponentTeamName,
+                      groupValue: _game.callInProgress?.team,
+                      onChanged: (String? value) {
+                        if (value != null) {
                           setState(() {
-                            _game.callInProgress!.callType = null;
+                            _game.callInProgress?.team = value;
                           });
-                        },
-                        icon: Icon(Icons.clear)),
-                  ],
-                )
-              ],
-            ),
+                        }
+                      }),
+                  Text(_game.opponentTeamName),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text('Call type'),
+                  DropdownButton<CallType>(
+                      onChanged: (CallType? value) {
+                        setState(() {
+                          _game.callInProgress!.callType = value;
+                        });
+                      },
+                      value: _game.callInProgress!.callType,
+                      items: CallType.values
+                          .map((e) => DropdownMenuItem(
+                                child: Text(
+                                    e.name.capitalize().replaceAll('_', ' ')),
+                                value: e,
+                              ))
+                          .toList()),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _game.callInProgress!.callType = null;
+                        });
+                      },
+                      icon: Icon(Icons.clear)),
+                ],
+              )
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _game.callAccepted();
-                      });
-                    },
-                    style: ButtonStyle(),
-                    child: Text('Accepted')),
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _game.callContested();
-                      });
-                    },
-                    style: ButtonStyle(),
-                    child: Text('Contested')),
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _game.discardCall();
-                      });
-                    },
-                    style: ButtonStyle(),
-                    child: Text('Cancel')),
-              ],
-            ),
-          ), // actions
-        ],
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _game.callAccepted();
+                    });
+                  },
+                  style: ButtonStyle(),
+                  child: Text('Accepted')),
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _game.callContested();
+                    });
+                  },
+                  style: ButtonStyle(),
+                  child: Text('Contested')),
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _game.discardCall();
+                    });
+                  },
+                  style: ButtonStyle(),
+                  child: Text('Cancel')),
+            ],
+          ),
+        ), // actions
+      ],
     );
   }
 
@@ -301,133 +298,127 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
       }
     }
 
-    return Container(
-      color: Colors.blue[50],
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: Text(
-              'Pull time',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ), // title
-          Text(
-            sideMessage,
-            style: TextStyle(color: Colors.grey),
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 10.0),
+          child: Text(
+            'Pull time',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          if (genderRatioMessage != null)
-            Text(
-              genderRatioMessage,
-              style: TextStyle(color: Colors.grey),
-            ), // description
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Text('$team throws pull'),
+        ), // title
+        Text(
+          sideMessage,
+          style: TextStyle(color: Colors.grey),
+        ),
+        if (genderRatioMessage != null)
+          Text(
+            genderRatioMessage,
+            style: TextStyle(color: Colors.grey),
           ), // description
-          Padding(
-            padding: const EdgeInsets.only(bottom: 15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          child: Text('$team throws pull'),
+        ), // description
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _game.pull();
+                    });
+                  },
+                  style: ButtonStyle(),
+                  child: Text('Done')),
+              Visibility(
+                visible: !_game.isHalftimeReached(),
+                child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        _game.pull();
+                        _game.halfTime();
                       });
                     },
                     style: ButtonStyle(),
-                    child: Text('Done')),
-                Visibility(
-                  visible: !_game.isHalftimeReached(),
+                    child: Text('Half Time')),
+              ),
+              Visibility(
+                  visible: _game.checkpoints.isNotEmpty,
                   child: ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          _game.halfTime();
+                          _game.undoLastCheckpoint();
                         });
                       },
-                      style: ButtonStyle(),
-                      child: Text('Half Time')),
-                ),
-                Visibility(
-                    visible: _game.checkpoints.isNotEmpty,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _game.undoLastCheckpoint();
-                          });
-                        },
-                        child: Text('Undo'))),
-                ElevatedButton(onPressed: finishGame, child: Text('Finish')),
-              ],
-            ),
+                      child: Text('Undo'))),
+              ElevatedButton(onPressed: finishGame, child: Text('Finish')),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget playOnStep() {
     var team = _game.onOffense() ? _game.yourTeamName : _game.opponentTeamName;
-    return Container(
-      color: Colors.blue[50],
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: Text(
-              'Play On',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ), // title
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Text('$team on offense'),
-          ), // description
-          Padding(
-            padding: const EdgeInsets.only(bottom: 15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _game.goal();
-                      });
-                    },
-                    style: ButtonStyle(),
-                    child: Text('Goal')),
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _game.turnover();
-                      });
-                    },
-                    style: ButtonStyle(),
-                    child: Text('Turnover')),
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _game.call();
-                      });
-                    },
-                    style: ButtonStyle(),
-                    child: Text('Call')),
-                Visibility(
-                    visible: _game.checkpoints.isNotEmpty,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _game.undoLastCheckpoint();
-                          });
-                        },
-                        child: Text('Undo'))),
-                ElevatedButton(onPressed: finishGame, child: Text('Finish')),
-              ],
-            ),
-          ), // actions
-        ],
-      ),
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 10.0),
+          child: Text(
+            'Play On',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ), // title
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          child: Text('$team on offense'),
+        ), // description
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _game.goal();
+                    });
+                  },
+                  style: ButtonStyle(),
+                  child: Text('Goal')),
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _game.turnover();
+                    });
+                  },
+                  style: ButtonStyle(),
+                  child: Text('Turnover')),
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _game.call();
+                    });
+                  },
+                  style: ButtonStyle(),
+                  child: Text('Call')),
+              Visibility(
+                  visible: _game.checkpoints.isNotEmpty,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _game.undoLastCheckpoint();
+                        });
+                      },
+                      child: Text('Undo'))),
+              ElevatedButton(onPressed: finishGame, child: Text('Finish')),
+            ],
+          ),
+        ), // actions
+      ],
     );
   }
 
