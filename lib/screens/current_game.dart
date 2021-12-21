@@ -148,23 +148,19 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
         child: Expanded(child: Center(child: Text('No actions performed yet'))),
       );
     } else {
-      return Container(
-        child: Expanded(
-          child: ListView.separated(
-              shrinkWrap: true,
-              reverse: true,
-              itemBuilder: (context, index) {
-                var checkpoint = _game.checkpoints[index];
-                var elapsed = _game.getElapsed(at: checkpoint.timestamp);
-                return ListTile(
-                  title: Text(checkpoint.toString()),
-                  leading: Timestamp(elapsed: elapsed),
-                );
-              },
-              separatorBuilder: (_, __) => Divider(),
-              itemCount: _game.checkpoints.length),
-        ),
-      );
+      return ListView.separated(
+          shrinkWrap: true,
+          reverse: true,
+          itemBuilder: (context, index) {
+            var checkpoint = _game.checkpoints[index];
+            var elapsed = _game.getElapsed(at: checkpoint.timestamp);
+            return ListTile(
+              title: Text(checkpoint.toString()),
+              leading: Timestamp(elapsed: elapsed),
+            );
+          },
+          separatorBuilder: (_, __) => Divider(),
+          itemCount: _game.checkpoints.length);
     }
   }
 
