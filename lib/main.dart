@@ -1,8 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/screens/new_game.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:ultiplay/screens/sign_in.dart';
+import 'package:ultiplay/screens/sign_up.dart';
+import 'package:ultiplay/screens/verify_email.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,14 +45,28 @@ class Ultiplay extends StatelessWidget {
 
     return MaterialApp(
       title: 'Ultiplay',
-      home: Home(),
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.light,
       routes: {
-        Home.routeName: (context) => Home(),
-        NewGame.routeName: (context) => NewGame(),
-        CurrentGame.routeName: (context) => CurrentGame(),
+        SignIn.routeName: (context) => SignIn(),
+        SignUp.routeName: (context) => SignUp(),
+      },
+      onGenerateRoute: (settings) {
+        if (FirebaseAuth.instance.currentUser == null) {
+          return MaterialPageRoute(builder: (context) => SignIn());
+        } else if (!FirebaseAuth.instance.currentUser!.emailVerified) {
+          return MaterialPageRoute(builder: (context) => VerifyEmail());
+        } else {
+          switch (settings.name) {
+            case NewGame.routeName:
+              return MaterialPageRoute(builder: (context) => NewGame());
+            case CurrentGame.routeName:
+              return MaterialPageRoute(builder: (context) => CurrentGame());
+            default:
+              return MaterialPageRoute(builder: (context) => Home());
+          }
+        }
       },
     );
   }
