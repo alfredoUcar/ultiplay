@@ -54,17 +54,22 @@ class Ultiplay extends StatelessWidget {
       },
       onGenerateRoute: (settings) {
         if (FirebaseAuth.instance.currentUser == null) {
-          return MaterialPageRoute(builder: (context) => SignIn());
+          return MaterialPageRoute(
+              settings: settings, builder: (context) => SignIn());
         } else if (!FirebaseAuth.instance.currentUser!.emailVerified) {
-          return MaterialPageRoute(builder: (context) => VerifyEmail());
+          return MaterialPageRoute(
+              settings: settings, builder: (context) => VerifyEmail());
         } else {
           switch (settings.name) {
             case NewGame.routeName:
-              return MaterialPageRoute(builder: (context) => NewGame());
+              return MaterialPageRoute(
+                  settings: settings, builder: (context) => NewGame());
             case CurrentGame.routeName:
-              return MaterialPageRoute(builder: (context) => CurrentGame());
+              return MaterialPageRoute(
+                  settings: settings, builder: (context) => CurrentGame());
             default:
-              return MaterialPageRoute(builder: (context) => Home());
+              return MaterialPageRoute(
+                  settings: settings, builder: (context) => Home());
           }
         }
       },
