@@ -53,6 +53,8 @@ class _SignUpState extends State<SignUp> {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: TextFormField(
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     hintText: 'Email address',
                     border: OutlineInputBorder(
@@ -70,6 +72,8 @@ class _SignUpState extends State<SignUp> {
                 child: TextFormField(
                   controller: passwordController,
                   obscureText: true,
+                  keyboardType: TextInputType.visiblePassword,
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     hintText: 'Password',
                     border: OutlineInputBorder(
@@ -95,6 +99,8 @@ class _SignUpState extends State<SignUp> {
                     return null;
                   },
                   obscureText: true,
+                  keyboardType: TextInputType.visiblePassword,
+                  textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
                     hintText: 'Repeat password',
                     border: OutlineInputBorder(

@@ -44,6 +44,8 @@ class _SignInState extends State<SignIn> {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: TextFormField(
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     hintText: 'Email address',
                     border: OutlineInputBorder(
@@ -61,6 +63,8 @@ class _SignInState extends State<SignIn> {
                 child: TextFormField(
                   controller: passwordController,
                   obscureText: true,
+                  keyboardType: TextInputType.visiblePassword,
+                  textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
                     hintText: 'Password',
                     border: OutlineInputBorder(
