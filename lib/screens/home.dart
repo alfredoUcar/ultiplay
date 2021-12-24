@@ -3,6 +3,7 @@ import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/new_game.dart';
 import 'package:intl/intl.dart';
+import 'package:ultiplay/widgets/global_menu.dart';
 
 class Home extends StatefulWidget {
   static const routeName = 'home';
@@ -23,6 +24,7 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text('Ultiplay'),
       ),
+      drawer: GlobalMenu(),
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           PlayedGames(playedGames: _playedGames),
