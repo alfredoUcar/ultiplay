@@ -13,11 +13,16 @@ class VerifyEmail extends StatefulWidget {
 }
 
 class _VerifyEmailState extends State<VerifyEmail> {
+  String? _email;
+
   @override
   void initState() {
     super.initState();
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user != null) {
+        setState(() {
+          _email = user.email;
+        });
         if (user.emailVerified) {
           Navigator.of(context).pushReplacementNamed(Home.routeName);
         }
@@ -45,8 +50,13 @@ class _VerifyEmailState extends State<VerifyEmail> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Text('Please verify your email'),
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              _email != null
+                  ? "We've sent an email to $_email to verify your email address and activate your account"
+                  : "We've sent you an email to verify your email address and activate your account",
+              textAlign: TextAlign.center,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -57,13 +67,15 @@ class _VerifyEmailState extends State<VerifyEmail> {
                     Navigator.of(context).pushReplacementNamed(Home.routeName);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Your account isn\'t verified yet')));
+                        content: Text("Your account isn't verified yet")));
                   }
                 },
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Confirm'),
+                    SizedBox(width: 10),
+                    Icon(Icons.check),
                   ],
                 )),
           ),
@@ -75,14 +87,30 @@ class _VerifyEmailState extends State<VerifyEmail> {
                       .sendEmailVerification();
 
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          'Validation email sent to ${FirebaseAuth.instance.currentUser!.email}')));
+                      content: Text('Validation email sent to $_email')));
                 },
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Resend verification email'),
+                    SizedBox(width: 10),
                     Icon(Icons.send),
+                  ],
+                )),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton(
+                onPressed: () async {
+                  FirebaseAuth.instance.signOut();
+                  Navigator.of(context).pushReplacementNamed(SignIn.routeName);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Logout'),
+                    SizedBox(width: 10),
+                    Icon(Icons.exit_to_app),
                   ],
                 )),
           ),
