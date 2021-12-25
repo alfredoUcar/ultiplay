@@ -1,6 +1,6 @@
 {
-    "name": "ultiplay",
-    "short_name": "ultiplay",
+    "name": "Ultiplay",
+    "short_name": "Ultiplay",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

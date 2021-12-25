@@ -1,4 +1,4 @@
-# ultiplay
+# Ultiplay
 
 A new Flutter project.
 
