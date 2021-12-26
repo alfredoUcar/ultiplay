@@ -26,9 +26,11 @@ class _HomeState extends State<Home> {
       ),
       drawer: GlobalMenu(),
       body: Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          PlayedGames(playedGames: _playedGames),
-        ]),
+        child: (_playedGames.isEmpty)
+            ? Text('Press "+" button to start your first game')
+            : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                PlayedGames(playedGames: _playedGames),
+              ]),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Column(
