@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ultiplay/screens/current_game.dart';
@@ -11,6 +12,7 @@ import 'package:ultiplay/screens/verify_email.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseAnalytics.instance.logAppOpen();
   runApp(Ultiplay());
 }
 
@@ -60,6 +62,7 @@ class Ultiplay extends StatelessWidget {
           return MaterialPageRoute(
               settings: settings, builder: (context) => VerifyEmail());
         } else {
+          FirebaseAnalytics.instance.logScreenView(screenName: settings.name);
           switch (settings.name) {
             case NewGame.routeName:
               return MaterialPageRoute(

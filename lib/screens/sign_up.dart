@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -133,6 +134,7 @@ class _SignUpState extends State<SignUp> {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
+      FirebaseAnalytics.instance.logSignUp(signUpMethod: 'email');
     } on FirebaseAuthException catch (error) {
       if (error.code == 'weak-password') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -97,6 +98,7 @@ class _SignInState extends State<SignIn> {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
+      FirebaseAnalytics.instance.logLogin(loginMethod: 'email');
       Navigator.of(context).pushReplacementNamed(Home.routeName);
     } on FirebaseAuthException catch (error) {
       if (error.code == 'user-not-found') {
