@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/screens/sign_in.dart';
 
 class GlobalMenu extends StatefulWidget {
