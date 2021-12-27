@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/home.dart';
@@ -15,7 +16,9 @@ void main() async {
   FirebaseAuth.instance.authStateChanges().listen((User? user) async {
     if (user == null) {
       FirebaseAnalytics.instance.setUserId(id: null);
+      FirebaseCrashlytics.instance.setUserIdentifier('');
     } else {
+      FirebaseCrashlytics.instance.setUserIdentifier(user.uid);
       FirebaseAnalytics.instance.setUserId(id: user.uid);
       FirebaseAnalytics.instance
           .setUserProperty(name: 'email', value: user.email);
