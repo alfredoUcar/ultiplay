@@ -59,6 +59,9 @@ class Ultiplay extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.light,
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance)
+      ],
       routes: {
         SignIn.routeName: (context) => SignIn(),
         SignUp.routeName: (context) => SignUp(),
@@ -71,7 +74,6 @@ class Ultiplay extends StatelessWidget {
           return MaterialPageRoute(
               settings: settings, builder: (context) => VerifyEmail());
         } else {
-          FirebaseAnalytics.instance.logScreenView(screenName: settings.name);
           switch (settings.name) {
             case NewGame.routeName:
               return MaterialPageRoute(
