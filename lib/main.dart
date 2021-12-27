@@ -12,6 +12,15 @@ import 'package:ultiplay/screens/verify_email.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+    if (user == null) {
+      FirebaseAnalytics.instance.setUserId(id: null);
+    } else {
+      FirebaseAnalytics.instance.setUserId(id: user.uid);
+      FirebaseAnalytics.instance
+          .setUserProperty(name: 'email', value: user.email);
+    }
+  });
   FirebaseAnalytics.instance.logAppOpen();
   runApp(Ultiplay());
 }
