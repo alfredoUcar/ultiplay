@@ -107,9 +107,8 @@ class PlayedGames extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             var playedGame = _playedGames[index];
             final DateFormat formatter = DateFormat.yMMMd().add_Hm();
-            var trophyColor = playedGame.yourScore > playedGame.opponentScore
-                ? Colors.amber.value
-                : Colors.grey.value;
+            var trophyColor =
+                playedGame.isVictory ? Colors.amber.value : Colors.grey.value;
             return ListTile(
               leading: Icon(Icons.emoji_events, color: Color(trophyColor)),
               title: Text(
@@ -120,7 +119,7 @@ class PlayedGames extends StatelessWidget {
                 ],
               ),
               trailing: Text(
-                '${playedGame.yourScore} - ${playedGame.opponentScore}',
+                playedGame.scoreboard,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),
             );

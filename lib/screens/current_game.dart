@@ -138,7 +138,7 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
                   style: TextStyle(color: Colors.grey),
                 ),
                 Text(
-                  "${_game.yourScore} - ${_game.opponentScore}",
+                  _game.scoreboard,
                   style: scoreBoardStyle,
                 ),
                 Timer(time: _game.getTime()),

@@ -70,8 +70,8 @@ class Game {
   String get yourTeamName => _yourTeamName;
   FieldSide get yourTeamSide => _yourSide;
   String get opponentTeamName => _opponentTeamName;
-  int get yourScore => _yourScore;
-  int get opponentScore => _opponentScore;
+  String get scoreboard => "$_yourScore - $_opponentScore";
+  bool get isVictory => _endedAt != null && _yourScore > _opponentScore;
   int get _playedPoints => _yourScore + _opponentScore;
   DateTime? get startedAt => _startedAt;
   DateTime? get endedAt => _endedAt;
