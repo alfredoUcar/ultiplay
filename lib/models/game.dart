@@ -92,12 +92,19 @@ class Game {
     _endedAt = DateTime.now();
   }
 
-  Duration getElapsed({DateTime? at}) {
+  /// Played time in minutes and seconds, e.g., 114:23 for 1 hour, 54 minutes and 23 seconds.
+  /// Time is calculated relative to [at] moment if provided or now.
+  String getTime({DateTime? at}) {
     if (at == null) {
       at = DateTime.now();
     }
-
-    return at.difference(_startedAt as DateTime);
+    var minDigits = 2;
+    var padding = '0';
+    var elapsed = at.difference(_startedAt as DateTime);
+    var minutes = elapsed.inMinutes.toString().padLeft(minDigits, padding);
+    var seconds =
+        elapsed.inSeconds.remainder(60).toString().padLeft(minDigits, padding);
+    return "$minutes:$seconds";
   }
 
   bool onOffense() => _yourPosition == Position.offense;

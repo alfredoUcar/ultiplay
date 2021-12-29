@@ -24,7 +24,7 @@ class CurrentGame extends StatefulWidget {
 class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
   late Game _game;
   late final Ticker _ticker;
-  late Duration _elapsed;
+  late String _time;
   late Function() _finishGame;
   late TabController _tabController;
 
@@ -32,11 +32,10 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _ticker = this.createTicker((elapsed) {
-      var _newElapsed = _game.getElapsed();
-      if (_newElapsed.inSeconds > _elapsed.inSeconds) {
-        // just update timer once per second
+      var newTime = _game.getTime();
+      if (newTime != _time) {
         setState(() {
-          _elapsed = _newElapsed;
+          _time = newTime;
         });
       }
     });
@@ -56,7 +55,7 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
     var screenArguments =
         ModalRoute.of(context)!.settings.arguments as CurrentGameArguments;
     _game = screenArguments.game;
-    _elapsed = _game.getElapsed();
+    _time = _game.getTime();
     _finishGame = screenArguments.onFinish;
 
     return Scaffold(
@@ -141,7 +140,7 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
                   "${_game.yourScore} - ${_game.opponentScore}",
                   style: scoreBoardStyle,
                 ),
-                Timestamp(elapsed: _elapsed),
+                Timestamp(time: _game.getTime()),
               ],
             ),
           ),
@@ -167,10 +166,10 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
           reverse: true,
           itemBuilder: (context, index) {
             var checkpoint = _game.checkpoints[index];
-            var elapsed = _game.getElapsed(at: checkpoint.timestamp);
+            var time = _game.getTime(at: checkpoint.timestamp);
             return ListTile(
               title: Text(checkpoint.toString()),
-              leading: Timestamp(elapsed: elapsed),
+              leading: Timestamp(time: time),
             );
           },
           separatorBuilder: (_, __) => Divider(),
@@ -434,25 +433,19 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
 }
 
 class Timestamp extends StatelessWidget {
+  final String time;
+
   const Timestamp({
     Key? key,
-    required Duration elapsed,
-  })  : _elapsed = elapsed,
-        super(key: key);
-
-  final Duration _elapsed;
+    required this.time,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var minDigits = 2;
-    var padding = '0';
-    var minutes = _elapsed.inMinutes.toString().padLeft(minDigits, padding);
-    var seconds =
-        _elapsed.inSeconds.remainder(60).toString().padLeft(minDigits, padding);
     return Column(
       children: [
         Icon(Icons.watch_later_outlined),
-        Text("$minutes:$seconds"),
+        Text(time),
       ],
     );
   }
