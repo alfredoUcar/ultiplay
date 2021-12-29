@@ -4,6 +4,7 @@ import 'package:ultiplay/extensions/enum.dart';
 import 'package:ultiplay/extensions/string.dart';
 import 'package:ultiplay/models/checkpoint.dart';
 import 'package:ultiplay/models/game.dart';
+import 'package:ultiplay/widgets/timer.dart';
 
 class CurrentGameArguments {
   void Function() onFinish;
@@ -140,7 +141,7 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
                   "${_game.yourScore} - ${_game.opponentScore}",
                   style: scoreBoardStyle,
                 ),
-                Timestamp(time: _game.getTime()),
+                Timer(time: _game.getTime()),
               ],
             ),
           ),
@@ -169,7 +170,7 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
             var time = _game.getTime(at: checkpoint.timestamp);
             return ListTile(
               title: Text(checkpoint.toString()),
-              leading: Timestamp(time: time),
+              leading: Timer(time: time),
             );
           },
           separatorBuilder: (_, __) => Divider(),
@@ -429,24 +430,5 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
   void finishGame() {
     _finishGame();
     Navigator.of(context).pop();
-  }
-}
-
-class Timestamp extends StatelessWidget {
-  final String time;
-
-  const Timestamp({
-    Key? key,
-    required this.time,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(Icons.watch_later_outlined),
-        Text(time),
-      ],
-    );
   }
 }
