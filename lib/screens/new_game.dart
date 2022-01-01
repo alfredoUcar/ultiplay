@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:multi_validator/multi_validator.dart';
+import 'package:provider/provider.dart';
 import 'package:ultiplay/extensions/string.dart';
 import 'package:ultiplay/extensions/enum.dart';
 import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/screens/current_game.dart';
-import 'package:multi_validator/multi_validator.dart';
-
-class NewGameArguments {
-  void Function(Game) onStart;
-  void Function() onFinish;
-
-  NewGameArguments(this.onStart, this.onFinish);
-}
+import 'package:ultiplay/states/current_game.dart' as States;
 
 class NewGame extends StatefulWidget {
   static const routeName = 'new-game';
@@ -22,9 +17,6 @@ class NewGame extends StatefulWidget {
 }
 
 class _NewGameState extends State<NewGame> {
-  Game? _game;
-  late NewGameArguments _screenArguments;
-
   bool _teamsStepIsValid = true;
   late TextEditingController mainTeamController;
   late TextEditingController opponentTeamController;
@@ -73,9 +65,6 @@ class _NewGameState extends State<NewGame> {
 
   @override
   Widget build(BuildContext context) {
-    _screenArguments =
-        ModalRoute.of(context)!.settings.arguments as NewGameArguments;
-
     var genderRuleSubtitle;
     var genderRatioContent;
     var genderRatioSubtitle;
@@ -185,8 +174,7 @@ class _NewGameState extends State<NewGame> {
             ),
             IconButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, NewGame.routeName,
-                    arguments: _screenArguments);
+                Navigator.pushReplacementNamed(context, NewGame.routeName);
               },
               icon: Icon(Icons.restart_alt),
               color: Colors.white,
@@ -620,8 +608,9 @@ class _NewGameState extends State<NewGame> {
   void onSubmit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      var game;
       if (_division == Division.mixed) {
-        _game = new Game(
+        game = new Game(
           yourTeamName: mainTeamController.text,
           opponentTeamName: opponentTeamController.text,
           initialPosition: _mainTeamPosition as Position,
@@ -633,7 +622,7 @@ class _NewGameState extends State<NewGame> {
           endzoneA: _endzoneASide,
         );
       } else {
-        _game = new Game(
+        game = new Game(
           yourTeamName: mainTeamController.text,
           opponentTeamName: opponentTeamController.text,
           initialPosition: _mainTeamPosition as Position,
@@ -642,8 +631,7 @@ class _NewGameState extends State<NewGame> {
           modality: _modality as Modality,
         );
       }
-      _screenArguments.onStart(_game as Game);
-      openNewGame(context);
+      startGame(context, game);
     } else {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -691,10 +679,10 @@ class _NewGameState extends State<NewGame> {
     return null;
   }
 
-  void openNewGame(BuildContext context) {
+  void startGame(BuildContext context, Game game) {
+    game.start();
+    Provider.of<States.CurrentGame>(context, listen: false).game = game;
     Navigator.of(context).pop();
-    Navigator.of(context).pushNamed(CurrentGame.routeName,
-        arguments:
-            CurrentGameArguments(_screenArguments.onFinish, _game as Game));
+    Navigator.of(context).pushNamed(CurrentGame.routeName);
   }
 }

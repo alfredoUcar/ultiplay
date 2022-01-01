@@ -1,8 +1,10 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/new_game.dart';
-import 'package:intl/intl.dart';
+import 'package:ultiplay/states/current_game.dart' as States;
 import 'package:ultiplay/widgets/global_menu.dart';
 
 class Home extends StatefulWidget {
@@ -15,7 +17,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Game? _currentGame;
   List<Game> _playedGames = [];
 
   @override
@@ -33,59 +34,33 @@ class _HomeState extends State<Home> {
               ]),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Visibility(
-            visible: _currentGame != null,
-            child: FloatingActionButton(
+      floatingActionButton: Consumer<States.CurrentGame>(
+        builder: (context, currentGame, child) => Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Visibility(
+              visible: !currentGame.isEmpty(),
+              child: FloatingActionButton(
+                  heroTag: null,
+                  child: Icon(Icons.play_arrow),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(CurrentGame.routeName);
+                  }),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            FloatingActionButton(
                 heroTag: null,
-                child: Icon(Icons.play_arrow),
+                child: Icon(Icons.add),
+                tooltip: 'New game',
                 onPressed: () {
-                  openCurrentGame(context);
+                  Navigator.of(context).pushNamed(NewGame.routeName);
                 }),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          FloatingActionButton(
-              heroTag: null,
-              child: Icon(Icons.add),
-              tooltip: 'New game',
-              onPressed: () {
-                openNewGameForm(context);
-              }),
-        ],
+          ],
+        ),
       ),
     );
-  }
-
-  void openNewGameForm(BuildContext context) {
-    Navigator.of(context).pushNamed(NewGame.routeName,
-        arguments: NewGameArguments(startGameHandler, finishGameHandler));
-  }
-
-  startGameHandler(Game game) {
-    setState(() {
-      _currentGame = game;
-      _currentGame!.start();
-    });
-  }
-
-  finishGameHandler() {
-    if (_currentGame != null) {
-      setState(() {
-        _currentGame!.finish();
-        _playedGames.add(_currentGame as Game);
-        _currentGame = null;
-      });
-    }
-  }
-
-  void openCurrentGame(BuildContext context) {
-    Navigator.of(context).pushNamed(CurrentGame.routeName,
-        arguments:
-            CurrentGameArguments(finishGameHandler, _currentGame as Game));
   }
 }
 

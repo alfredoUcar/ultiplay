@@ -1,11 +1,13 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ultiplay/states/current_game.dart' as States;
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/screens/new_game.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:ultiplay/screens/sign_in.dart';
 import 'package:ultiplay/screens/sign_up.dart';
 import 'package:ultiplay/screens/verify_email.dart';
@@ -25,7 +27,12 @@ void main() async {
     }
   });
   FirebaseAnalytics.instance.logAppOpen();
-  runApp(Ultiplay());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => States.CurrentGame()),
+    ],
+    child: Ultiplay(),
+  ));
 }
 
 class Ultiplay extends StatelessWidget {
