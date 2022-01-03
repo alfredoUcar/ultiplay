@@ -92,6 +92,8 @@ class Game {
     _endedAt = DateTime.now();
   }
 
+  bool finished() => endedAt != null;
+
   /// Played time in minutes and seconds, e.g., 114:23 for 1 hour, 54 minutes and 23 seconds.
   /// Time is calculated relative to [at] moment if provided or now.
   String getTime({DateTime? at}) {

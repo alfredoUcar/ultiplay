@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/states/current_game.dart' as States;
+import 'package:ultiplay/states/played_games.dart' as States;
 import 'package:ultiplay/widgets/current_step.dart';
 import 'package:ultiplay/widgets/game_status.dart';
 import 'package:ultiplay/widgets/timeline.dart';
@@ -17,7 +19,7 @@ class CurrentGame extends StatefulWidget {
 
 class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
   late final Ticker _ticker;
-  late String _time;
+  String? _time;
   late TabController _tabController;
 
   @override
@@ -45,8 +47,6 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    _time = Provider.of<States.CurrentGame>(context).getTime();
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -55,20 +55,23 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
       floatingActionButtonLocation: (_tabController.index == 0)
           ? FloatingActionButtonLocation.endDocked
           : FloatingActionButtonLocation.endFloat,
-      floatingActionButton: Consumer<States.CurrentGame>(
-        builder: (context, game, child) => (_tabController.index == 0)
-            ? FloatingActionButton(
-                child: Icon(Icons.exit_to_app),
-                onPressed: () {
-                  game.finish();
-                },
-              )
-            : FloatingActionButton(
-                child: Icon(Icons.undo),
-                onPressed: () {
-                  game.undoLastCheckpoint();
-                },
-              ),
+      floatingActionButton: Consumer2<States.CurrentGame, States.PlayedGames>(
+        builder: (context, currentGame, playedGames, child) =>
+            (_tabController.index == 0)
+                ? FloatingActionButton(
+                    child: Icon(Icons.exit_to_app),
+                    onPressed: () {
+                      currentGame.finish();
+                      Navigator.of(context)
+                          .pushReplacementNamed(Home.routeName);
+                    },
+                  )
+                : FloatingActionButton(
+                    child: Icon(Icons.undo),
+                    onPressed: () {
+                      currentGame.undoLastCheckpoint();
+                    },
+                  ),
       ),
       bottomNavigationBar: Material(
         color: Theme.of(context).colorScheme.primary,

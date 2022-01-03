@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ultiplay/states/current_game.dart' as States;
+import 'package:ultiplay/states/played_games.dart' as States;
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/screens/new_game.dart';
@@ -30,6 +31,14 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => States.CurrentGame()),
+      ChangeNotifierProxyProvider<States.CurrentGame, States.PlayedGames>(
+        create: (context) => States.PlayedGames(),
+        update: (context, currentGame, playedGames) {
+          if (playedGames == null) throw ArgumentError.notNull('playedGames');
+          playedGames.currentGame = currentGame.getGame();
+          return playedGames;
+        },
+      ),
     ],
     child: Ultiplay(),
   ));

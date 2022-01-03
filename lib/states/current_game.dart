@@ -12,6 +12,8 @@ class CurrentGame extends ChangeNotifier implements Game {
     notifyListeners();
   }
 
+  Game? getGame() => _game;
+
   bool isEmpty() => _game == null;
 
   clear() {
@@ -196,4 +198,7 @@ class CurrentGame extends ChangeNotifier implements Game {
 
   @override
   FieldSide get yourTeamSide => _game!.yourTeamSide;
+
+  @override
+  bool finished() => _game!.finished();
 }

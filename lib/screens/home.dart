@@ -1,23 +1,14 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/new_game.dart';
 import 'package:ultiplay/states/current_game.dart' as States;
+import 'package:ultiplay/states/played_games.dart' as States;
 import 'package:ultiplay/widgets/global_menu.dart';
+import 'package:ultiplay/widgets/played_games.dart';
 
-class Home extends StatefulWidget {
+class Home extends StatelessWidget {
   static const routeName = 'home';
-
-  @override
-  State<StatefulWidget> createState() {
-    return _HomeState();
-  }
-}
-
-class _HomeState extends State<Home> {
-  List<Game> _playedGames = [];
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +18,10 @@ class _HomeState extends State<Home> {
       ),
       drawer: GlobalMenu(),
       body: Center(
-        child: (_playedGames.isEmpty)
+        child: (Provider.of<States.PlayedGames>(context).isEmpty())
             ? Text('Press "+" button to start your first game')
             : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                PlayedGames(playedGames: _playedGames),
+                PlayedGames(),
               ]),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -39,7 +30,7 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Visibility(
-              visible: !currentGame.isEmpty(),
+              visible: !currentGame.isEmpty() && !currentGame.finished(),
               child: FloatingActionButton(
                   heroTag: null,
                   child: Icon(Icons.play_arrow),
@@ -58,49 +49,6 @@ class _HomeState extends State<Home> {
                   Navigator.of(context).pushNamed(NewGame.routeName);
                 }),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class PlayedGames extends StatelessWidget {
-  const PlayedGames({
-    Key? key,
-    required List<Game> playedGames,
-  })  : _playedGames = playedGames,
-        super(key: key);
-
-  final List<Game> _playedGames;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Expanded(
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemBuilder: (BuildContext context, int index) {
-            var playedGame = _playedGames[index];
-            final DateFormat formatter = DateFormat.yMMMd().add_Hm();
-            var trophyColor =
-                playedGame.isVictory ? Colors.amber.value : Colors.grey.value;
-            return ListTile(
-              leading: Icon(Icons.emoji_events, color: Color(trophyColor)),
-              title: Text(
-                  '${playedGame.yourTeamName} vs ${playedGame.opponentTeamName}'),
-              subtitle: Row(
-                children: [
-                  Text(formatter.format(playedGame.startedAt as DateTime)),
-                ],
-              ),
-              trailing: Text(
-                playedGame.scoreboard,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-              ),
-            );
-          },
-          itemCount: _playedGames.length,
-          separatorBuilder: (BuildContext context, int index) => Divider(),
         ),
       ),
     );

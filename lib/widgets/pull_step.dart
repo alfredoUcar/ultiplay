@@ -52,7 +52,9 @@ class PullStep extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 15.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: game.isHalftimeReached()
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
                         onPressed: () {
