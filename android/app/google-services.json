@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "452096248595",
+    "firebase_url": "https://ultiplay-dev-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "ultiplay-dev",
     "storage_bucket": "ultiplay-dev.appspot.com"
   },
