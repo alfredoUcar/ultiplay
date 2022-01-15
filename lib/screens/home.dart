@@ -18,11 +18,7 @@ class Home extends StatelessWidget {
       ),
       drawer: GlobalMenu(),
       body: Center(
-        child: (Provider.of<States.PlayedGames>(context).isEmpty())
-            ? Text('Press "+" button to start your first game')
-            : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                PlayedGames(),
-              ]),
+        child: getHomeContent(context),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Consumer<States.CurrentGame>(
@@ -52,5 +48,26 @@ class Home extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget getHomeContent(BuildContext context) {
+    return Consumer<States.PlayedGames>(builder: (context, playedGames, child) {
+      if (playedGames.fetching()) {
+        return CircularProgressIndicator();
+      }
+
+      if (!playedGames.fetched()) {
+        return Text('Not fetched yet');
+      }
+
+      // data is fetched
+      if (playedGames.isEmpty()) {
+        return Text('Press "+" button to start your first game');
+      }
+
+      return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        PlayedGames(),
+      ]);
+    });
   }
 }

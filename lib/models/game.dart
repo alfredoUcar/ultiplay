@@ -67,6 +67,28 @@ class Game {
                 ? genderRule != null
                 : genderRule == null);
 
+  Game.fromMap(Map data)
+      : _yourTeamName = data['your_team'],
+        _opponentTeamName = data['opponent_team'],
+        _yourScore = data['your_score'],
+        _opponentScore = data['your_score'] + data['opponent_relative_score'],
+        _division = Division.values.elementAt(data['division']),
+        _modality = Modality.values.elementAt(data['modality']),
+        _genderRule = data['gender_rule'] != null
+            ? GenderRatioRule.values.elementAt(data['gender_rule'])
+            : null,
+        _genderRatio = data['gender_ratio'] != null
+            ? GenderRatio.values.elementAt(data['gender_ratio'])
+            : null,
+        _startedAt = data['started_at'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(data['started_at'])
+            : null,
+        _endedAt = data['ended_at'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(data['ended_at'])
+            : null,
+        _yourSide = FieldSide.values.elementAt(data['your_side']),
+        _yourPosition = Position.values.elementAt(data['your_position']);
+
   String get yourTeamName => _yourTeamName;
   FieldSide get yourTeamSide => _yourSide;
   String get opponentTeamName => _opponentTeamName;
@@ -298,4 +320,20 @@ class Game {
 
     checkpoints.removeLast();
   }
+
+  Map<String, dynamic> toMap() => {
+        'your_team': _yourTeamName,
+        'opponent_team': _opponentTeamName,
+        'your_score': _yourScore,
+        'opponent_relative_score': _opponentScore - _yourScore,
+        'division': _division.index,
+        'modality': _modality.index,
+        'gender_rule': _genderRule != null ? _genderRule!.index : null,
+        'gender_ratio': _genderRatio != null ? _genderRatio!.index : null,
+        'started_at':
+            _startedAt != null ? _startedAt!.millisecondsSinceEpoch : null,
+        'ended_at': _endedAt != null ? _endedAt!.millisecondsSinceEpoch : null,
+        'your_side': _yourSide.index,
+        'your_position': _yourPosition.index,
+      };
 }

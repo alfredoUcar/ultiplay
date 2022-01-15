@@ -1,27 +1,39 @@
 import 'package:flutter/widgets.dart';
 import 'package:ultiplay/models/game.dart';
+import 'package:ultiplay/repositories/games.dart';
 
 class PlayedGames extends ChangeNotifier {
-  final List<Game> _playedGames = [];
+  List<Game> _playedGames = [];
+  late Games _games;
 
-  set currentGame(Game? game) {
-    if (game != null && game.finished()) {
-      _playedGames.add(game);
-      notifyListeners();
-    }
+  bool _fetched = false;
+  bool _fetching = false;
+
+  PlayedGames() {
+    _games = Games();
   }
 
-  void add(Game game) {
-    _playedGames.add(game);
+  void fetch(String userId) {
+    _fetching = true;
+    notifyListeners();
+
+    _games.list(userId).then((games) {
+      _fetched = true;
+      _fetching = false;
+      _playedGames = games;
+      notifyListeners();
+    });
+  }
+
+  bool fetching() => _fetching;
+  bool fetched() => _fetched;
+
+  void add(String userId, Game game) {
+    _games.add(userId, game);
     notifyListeners();
   }
 
   bool isEmpty() => _playedGames.isEmpty;
-
-  void empty() {
-    _playedGames.clear();
-    notifyListeners();
-  }
 
   get length => _playedGames.length;
 

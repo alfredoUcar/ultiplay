@@ -4,8 +4,10 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/states/current_game.dart' as States;
 import 'package:ultiplay/states/played_games.dart' as States;
+import 'package:ultiplay/states/session.dart' as States;
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/screens/new_game.dart';
@@ -32,10 +34,18 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (context) => States.CurrentGame()),
       ChangeNotifierProxyProvider<States.CurrentGame, States.PlayedGames>(
-        create: (context) => States.PlayedGames(),
+        create: (context) {
+          var state = States.PlayedGames();
+          state.fetch(FirebaseAuth.instance.currentUser?.uid as String);
+          return state;
+        },
         update: (context, currentGame, playedGames) {
           if (playedGames == null) throw ArgumentError.notNull('playedGames');
-          playedGames.currentGame = currentGame.getGame();
+          if (!currentGame.isEmpty() && currentGame.finished()) {
+            var userId = FirebaseAuth.instance.currentUser?.uid as String;
+            playedGames.add(userId, currentGame.getGame() as Game);
+            playedGames.fetch(userId);
+          }
           return playedGames;
         },
       ),

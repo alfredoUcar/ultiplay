@@ -201,4 +201,9 @@ class CurrentGame extends ChangeNotifier implements Game {
 
   @override
   bool finished() => _game!.finished();
+
+  @override
+  Map<String, dynamic> toMap() {
+    return _game != null ? _game!.toMap() : {};
+  }
 }
