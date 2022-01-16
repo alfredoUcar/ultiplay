@@ -1,9 +1,10 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/screens/sign_in.dart';
 import 'package:ultiplay/screens/verify_email.dart';
+import 'package:ultiplay/states/session.dart';
 
 class SignUp extends StatefulWidget {
   static const routeName = 'sign-up';
@@ -19,16 +20,15 @@ class _SignUpState extends State<SignUp> {
   final repeatPasswordController = TextEditingController();
 
   @override
-  void initState() {
+  Future<void> initState() async {
     super.initState();
-    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
-      if (user != null && !user.emailVerified) {
-        await user.sendEmailVerification();
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Validation email sent')));
-        Navigator.of(context).pushReplacementNamed(VerifyEmail.routeName);
-      }
-    });
+    var session = Provider.of<Session>(context, listen: false);
+    if (session.user != null && !session.user!.emailVerified) {
+      await session.sendEmailVerification();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Validation email sent')));
+      Navigator.of(context).pushReplacementNamed(VerifyEmail.routeName);
+    }
   }
 
   @override
@@ -114,7 +114,11 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
               ),
-              ElevatedButton(onPressed: singUp, child: Text('Sign up')),
+              ElevatedButton(
+                  onPressed: () {
+                    singUp(context);
+                  },
+                  child: Text('Sign up')),
               SizedBox(height: 20),
               Text('Already registered?'),
               TextButton(
@@ -123,6 +127,13 @@ class _SignUpState extends State<SignUp> {
                         .pushReplacementNamed(SignIn.routeName);
                   },
                   child: Text('Access with your account')),
+              Consumer<Session>(
+                builder: (context, session, child) {
+                  return Visibility(
+                      child: CircularProgressIndicator(),
+                      visible: session.registering);
+                },
+              )
             ],
           ),
         ),
@@ -130,25 +141,20 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  void singUp() async {
+  void singUp(BuildContext context) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await Provider.of<Session>(context, listen: false).signUp(
           email: emailController.text, password: passwordController.text);
-      FirebaseAnalytics.instance.logSignUp(signUpMethod: 'email');
-    } on FirebaseAuthException catch (error) {
-      if (error.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content:
-                Text(error.message ?? 'The password provided is too weak')));
-      } else if (error.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                error.message ?? 'The account already exists for that email')));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error.message ?? 'Something went wrong')));
-      }
+      Navigator.of(context).pushReplacementNamed(Home.routeName);
+    } on WeakPasswordException catch (error) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error.message)));
+    } on EmailAlreadyInUseException {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Already exists an account with that email')));
+    } on UnexpectedException {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Something went wrong')));
     }
-    setState(() {});
   }
 }

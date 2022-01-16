@@ -1,9 +1,9 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/screens/sign_up.dart';
+import 'package:ultiplay/states/session.dart';
 
 class SignIn extends StatefulWidget {
   static const routeName = 'sign-in';
@@ -78,7 +78,11 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
               ),
-              ElevatedButton(onPressed: singIn, child: Text('Sign in')),
+              ElevatedButton(
+                  onPressed: () {
+                    singIn(context);
+                  },
+                  child: Text('Sign in')),
               SizedBox(height: 20),
               Text('Not registered yet?'),
               TextButton(
@@ -87,6 +91,13 @@ class _SignInState extends State<SignIn> {
                         .pushReplacementNamed(SignUp.routeName);
                   },
                   child: Text('Create an account')),
+              Consumer<Session>(
+                builder: (context, session, child) {
+                  return Visibility(
+                      child: CircularProgressIndicator(),
+                      visible: session.authenticating);
+                },
+              )
             ],
           ),
         ),
@@ -94,21 +105,20 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  void singIn() async {
+  void singIn(BuildContext context) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await Provider.of<Session>(context, listen: false).logIn(
           email: emailController.text, password: passwordController.text);
-      FirebaseAnalytics.instance.logLogin(loginMethod: 'email');
       Navigator.of(context).pushReplacementNamed(Home.routeName);
-    } on FirebaseAuthException catch (error) {
-      if (error.code == 'user-not-found') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(error.message ?? 'User not found for that email')));
-      } else if (error.code == 'wrong-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error.message ?? 'Wrong password')));
-      }
+    } on UserNotFoundException {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User not found for that email')));
+    } on WrongPasswordException {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Wrong password')));
+    } on UnexpectedException {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Something went wrong')));
     }
-    setState(() {});
   }
 }
