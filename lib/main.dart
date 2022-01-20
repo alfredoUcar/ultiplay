@@ -21,27 +21,14 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (context) => States.Session()),
       ChangeNotifierProvider(create: (context) => States.CurrentGame()),
-      ChangeNotifierProxyProvider2<States.Session, States.CurrentGame,
-          States.PlayedGames>(
-        create: (context) {
-          var state = States.PlayedGames();
-          var user = Provider.of<States.Session>(context, listen: false).user;
-          if (user != null) {
-            state.fetch(user.id);
-          }
-          return state;
-        },
-        update: (context, session, currentGame, playedGames) {
-          if (playedGames == null) throw ArgumentError.notNull('playedGames');
-          if (!currentGame.isEmpty() && currentGame.finished()) {
-            if (session.user != null) {
-              playedGames.add(session.user!.id, currentGame.getGame() as Game);
-              playedGames.fetch(session.user!.id);
-            }
-          }
-          return playedGames;
-        },
-      ),
+      ChangeNotifierProvider(create: (context) {
+        var state = States.PlayedGames();
+        var user = Provider.of<States.Session>(context, listen: false).user;
+        if (user != null) {
+          state.fetch(user.id);
+        }
+        return state;
+      }),
     ],
     child: Ultiplay(),
   ));

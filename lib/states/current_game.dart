@@ -1,11 +1,17 @@
 import 'package:flutter/widgets.dart';
 import 'package:ultiplay/models/checkpoint.dart';
 import 'package:ultiplay/models/game.dart';
+import 'package:ultiplay/repositories/games.dart';
 
 class IsEmpty implements Exception {}
 
 class CurrentGame extends ChangeNotifier implements Game {
   Game? _game;
+  late Games _games;
+
+  CurrentGame() {
+    _games = Games();
+  }
 
   set game(Game game) {
     _game = game;
@@ -77,6 +83,11 @@ class CurrentGame extends ChangeNotifier implements Game {
   @override
   void finish() {
     _game!.finish();
+    notifyListeners();
+  }
+
+  void save(String userId) {
+    _games.add(userId, _game as Game);
     notifyListeners();
   }
 

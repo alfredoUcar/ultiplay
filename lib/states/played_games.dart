@@ -28,14 +28,9 @@ class PlayedGames extends ChangeNotifier {
   bool fetching() => _fetching;
   bool fetched() => _fetched;
 
-  void add(String userId, Game game) {
-    _games.add(userId, game);
-    notifyListeners();
-  }
-
   bool isEmpty() => _playedGames.isEmpty;
 
   get length => _playedGames.length;
 
-  List<Game> get list => List.unmodifiable(_playedGames);
+  List<Game> get list => List.from(_playedGames);
 }

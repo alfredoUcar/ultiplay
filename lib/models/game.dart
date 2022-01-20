@@ -240,7 +240,6 @@ class Game {
 
   /// Only with gender rule B
   bool yourTeamChoosesGender() {
-    print('${_yourSide.toString()}-${_endzoneA.toString()}');
     return _yourSide == _endzoneA;
   }
 

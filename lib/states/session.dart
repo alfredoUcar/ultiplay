@@ -96,7 +96,6 @@ class Session extends ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password);
     } on Auth.FirebaseAuthException catch (error) {
       if (error.code == 'weak-password') {
-        print(error.message);
         throw WeakPasswordException(
             error.message ?? 'The password provided is too weak');
       } else if (error.code == 'email-already-in-use') {

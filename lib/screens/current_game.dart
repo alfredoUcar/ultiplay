@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:ultiplay/screens/home.dart';
 import 'package:ultiplay/states/current_game.dart' as States;
 import 'package:ultiplay/states/played_games.dart' as States;
+import 'package:ultiplay/states/session.dart' as States;
 import 'package:ultiplay/widgets/current_step.dart';
 import 'package:ultiplay/widgets/game_status.dart';
 import 'package:ultiplay/widgets/timeline.dart';
@@ -55,13 +56,16 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
       floatingActionButtonLocation: (_tabController.index == 0)
           ? FloatingActionButtonLocation.endDocked
           : FloatingActionButtonLocation.endFloat,
-      floatingActionButton: Consumer2<States.CurrentGame, States.PlayedGames>(
-        builder: (context, currentGame, playedGames, child) =>
+      floatingActionButton:
+          Consumer3<States.Session, States.CurrentGame, States.PlayedGames>(
+        builder: (context, session, currentGame, playedGames, child) =>
             (_tabController.index == 0)
                 ? FloatingActionButton(
                     child: Icon(Icons.exit_to_app),
                     onPressed: () {
                       currentGame.finish();
+                      currentGame.save(session.user!.id);
+                      playedGames.fetch(session.user!.id);
                       Navigator.of(context)
                           .pushReplacementNamed(Home.routeName);
                     },

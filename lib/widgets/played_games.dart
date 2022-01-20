@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/states/played_games.dart' as States;
+
+int mostRecentFirst(Game a, Game b) {
+  return b.startedAt!.compareTo(a.startedAt as DateTime);
+}
 
 class PlayedGames extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<States.PlayedGames>(builder: (context, playedGames, child) {
+      var games = playedGames.list;
+      games.sort(mostRecentFirst);
       return Container(
         child: Expanded(
           child: ListView.separated(
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
-              var playedGame = playedGames.list[index];
+              var playedGame = games[index];
               final DateFormat formatter = DateFormat.yMMMd().add_Hm();
               var trophyColor =
                   playedGame.isVictory ? Colors.amber.value : Colors.grey.value;
