@@ -9,6 +9,17 @@ class Games {
     DatabaseReference newGame = games.push();
     var data = game.toMap();
     return await newGame.set(data).then((onValue) {
+      return _addSummary(userId, game, newGame.key as String);
+    }).catchError((onError) {
+      return false;
+    });
+  }
+
+  Future<bool> _addSummary(String userId, Game game, String gameId) async {
+    DatabaseReference userGameSummary =
+        _database.ref("users/$userId/games/$gameId");
+    var data = game.summary.toMap();
+    return await userGameSummary.set(data).then((onValue) {
       return true;
     }).catchError((onError) {
       return false;

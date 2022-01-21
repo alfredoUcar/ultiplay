@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:ultiplay/models/checkpoint.dart';
+import 'package:ultiplay/models/entities/game_summary.dart';
 import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/repositories/games.dart';
 
@@ -214,10 +215,13 @@ class CurrentGame extends ChangeNotifier implements Game {
   bool finished() => _game!.finished();
 
   @override
+  String? get id => _game!.id;
+
+  @override
+  GameSummary get summary => _game!.summary;
+
+  @override
   Map<String, dynamic> toMap() {
     return _game != null ? _game!.toMap() : {};
   }
-
-  @override
-  String? get id => _game!.id;
 }

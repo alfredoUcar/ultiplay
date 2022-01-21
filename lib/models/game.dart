@@ -1,3 +1,5 @@
+import 'package:ultiplay/models/entities/game_summary.dart';
+
 import 'checkpoint.dart';
 
 enum Position { offense, defense }
@@ -322,6 +324,13 @@ class Game {
 
     checkpoints.removeLast();
   }
+
+  GameSummary get summary => GameSummary(
+        won: this.isVictory,
+        title: '$_yourTeamName vs $_opponentTeamName',
+        scoreboard: '$_yourScore vs $_opponentScore',
+        startedAt: _startedAt as DateTime,
+      );
 
   Map<String, dynamic> toMap() => {
         'your_team': _yourTeamName,
