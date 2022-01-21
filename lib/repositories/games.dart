@@ -15,6 +15,15 @@ class Games {
     });
   }
 
+  Future<bool> delete(String userId, String gameId) async {
+    DatabaseReference game = _database.ref("games/$userId/$gameId");
+    return await game.remove().then((onValue) {
+      return true;
+    }).catchError((onError) {
+      return false;
+    });
+  }
+
   Future<List<Game>> list(String userId) async {
     DatabaseReference games = _database.ref("games/$userId");
     DatabaseEvent event = await games.once();
@@ -27,6 +36,10 @@ class Games {
       return [];
     }
 
-    return rawList.entries.map((data) => Game.fromMap(data.value)).toList();
+    return rawList.entries.map((data) {
+      var gameData = data.value;
+      gameData['id'] = data.key;
+      return Game.fromMap(data.value);
+    }).toList();
   }
 }

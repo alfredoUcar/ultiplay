@@ -33,4 +33,14 @@ class PlayedGames extends ChangeNotifier {
   get length => _playedGames.length;
 
   List<Game> get list => List.from(_playedGames);
+
+  Future<bool> delete(String userId, String gameId) async {
+    return _games.delete(userId, gameId).then((deleted) {
+      if (deleted) {
+        _playedGames.removeWhere((game) => game.id == gameId);
+        notifyListeners();
+      }
+      return deleted;
+    });
+  }
 }

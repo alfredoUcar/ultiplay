@@ -217,4 +217,7 @@ class CurrentGame extends ChangeNotifier implements Game {
   Map<String, dynamic> toMap() {
     return _game != null ? _game!.toMap() : {};
   }
+
+  @override
+  String? get id => _game!.id;
 }

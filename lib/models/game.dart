@@ -20,6 +20,7 @@ class HalfTimeAlreadyReached implements Exception {}
 class AnyCheckpointAvailableToUndo implements Exception {}
 
 class Game {
+  String? _id;
   String _yourTeamName;
   String _opponentTeamName;
   Division _division;
@@ -68,7 +69,8 @@ class Game {
                 : genderRule == null);
 
   Game.fromMap(Map data)
-      : _yourTeamName = data['your_team'],
+      : _id = data.containsKey('id') ? data['id'] : null,
+        _yourTeamName = data['your_team'],
         _opponentTeamName = data['opponent_team'],
         _yourScore = data['your_score'],
         _opponentScore = data['your_score'] + data['opponent_relative_score'],
@@ -89,6 +91,7 @@ class Game {
         _yourSide = FieldSide.values.elementAt(data['your_side']),
         _yourPosition = Position.values.elementAt(data['your_position']);
 
+  String? get id => _id;
   String get yourTeamName => _yourTeamName;
   FieldSide get yourTeamSide => _yourSide;
   String get opponentTeamName => _opponentTeamName;
