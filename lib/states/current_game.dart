@@ -87,8 +87,8 @@ class CurrentGame extends ChangeNotifier implements Game {
     notifyListeners();
   }
 
-  void save(String userId) {
-    _games.add(userId, _game as Game);
+  void save(String userId) async {
+    await _games.add(userId, _game as Game);
     notifyListeners();
   }
 

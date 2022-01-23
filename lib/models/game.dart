@@ -328,7 +328,7 @@ class Game {
   GameSummary get summary => GameSummary(
         won: this.isVictory,
         title: '$_yourTeamName vs $_opponentTeamName',
-        scoreboard: '$_yourScore vs $_opponentScore',
+        scoreboard: scoreboard,
         startedAt: _startedAt as DateTime,
       );
 

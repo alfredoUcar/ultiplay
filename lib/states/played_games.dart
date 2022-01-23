@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
-import 'package:ultiplay/models/game.dart';
+import 'package:ultiplay/models/entities/game_summary.dart';
 import 'package:ultiplay/repositories/games.dart';
 
 class PlayedGames extends ChangeNotifier {
-  List<Game> _playedGames = [];
+  List<GameSummary> _playedGames = [];
   late Games _games;
 
   bool _fetched = false;
@@ -17,7 +17,7 @@ class PlayedGames extends ChangeNotifier {
     _fetching = true;
     notifyListeners();
 
-    _games.list(userId).then((games) {
+    _games.listSummaries(userId).then((games) {
       _fetched = true;
       _fetching = false;
       _playedGames = games;
@@ -32,12 +32,12 @@ class PlayedGames extends ChangeNotifier {
 
   get length => _playedGames.length;
 
-  List<Game> get list => List.from(_playedGames);
+  List<GameSummary> get list => List.from(_playedGames);
 
   Future<bool> delete(String userId, String gameId) async {
     return _games.delete(userId, gameId).then((deleted) {
       if (deleted) {
-        _playedGames.removeWhere((game) => game.id == gameId);
+        _playedGames.removeWhere((game) => game.gameId == gameId);
         notifyListeners();
       }
       return deleted;

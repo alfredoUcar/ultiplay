@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ultiplay/models/game.dart';
+import 'package:ultiplay/models/entities/game_summary.dart';
 import 'package:ultiplay/states/played_games.dart' as States;
 import 'package:ultiplay/states/session.dart' as States;
 
-int mostRecentFirst(Game a, Game b) {
-  return b.startedAt!.compareTo(a.startedAt as DateTime);
+int mostRecentFirst(GameSummary a, GameSummary b) {
+  return b.startedAt.compareTo(a.startedAt);
 }
 
 class PlayedGames extends StatelessWidget {
@@ -28,11 +28,10 @@ class PlayedGames extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 var playedGame = games[index];
                 final DateFormat formatter = DateFormat.yMMMd().add_Hm();
-                var trophyColor = playedGame.isVictory
-                    ? Colors.amber.value
-                    : Colors.grey.value;
+                var trophyColor =
+                    playedGame.won ? Colors.amber.value : Colors.grey.value;
                 return Dismissible(
-                  key: Key(playedGame.id as String),
+                  key: Key(playedGame.gameId as String),
                   background: Container(
                     color: Colors.red[400],
                     child: Align(
@@ -89,7 +88,7 @@ class PlayedGames extends StatelessWidget {
                             .id;
 
                     var deleted = await playedGames.delete(
-                        userId, playedGame.id as String);
+                        userId, playedGame.gameId as String);
                     if (deleted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Game deleted')));
@@ -101,12 +100,10 @@ class PlayedGames extends StatelessWidget {
                   child: ListTile(
                     leading:
                         Icon(Icons.emoji_events, color: Color(trophyColor)),
-                    title: Text(
-                        '${playedGame.yourTeamName} vs ${playedGame.opponentTeamName}'),
+                    title: Text(playedGame.title),
                     subtitle: Row(
                       children: [
-                        Text(
-                            formatter.format(playedGame.startedAt as DateTime)),
+                        Text(formatter.format(playedGame.startedAt)),
                       ],
                     ),
                     trailing: Text(

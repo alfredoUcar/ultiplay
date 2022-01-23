@@ -13,6 +13,13 @@ class GameSummary {
     required this.startedAt,
   });
 
+  GameSummary.fromMap(Map data)
+      : gameId = data['game_id'],
+        won = data['won'],
+        title = data['title'],
+        scoreboard = data['scoreboard'],
+        startedAt = DateTime.fromMillisecondsSinceEpoch(data['started_at']);
+
   Map<String, dynamic> toMap() => {
         'game_id': gameId,
         'won': won,

@@ -66,6 +66,7 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
                       currentGame.finish();
                       currentGame.save(session.user!.id);
                       playedGames.fetch(session.user!.id);
+
                       Navigator.of(context)
                           .pushReplacementNamed(Home.routeName);
                     },
