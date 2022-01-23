@@ -40,8 +40,10 @@ class Games {
 
   Future<bool> delete(String userId, String gameId) async {
     DatabaseReference game = _database.ref("games/$userId/$gameId");
-    return await game.remove().then((onValue) {
-      return _deleteSummary(userId, gameId);
+    return await game.remove().then((onValue) async {
+      await _deleteSummary(userId, gameId);
+      await _deleteChekpoints(userId, gameId);
+      return true;
     }).catchError((onError) {
       return false;
     });
@@ -50,6 +52,16 @@ class Games {
   Future<bool> _deleteSummary(String userId, String gameId) async {
     DatabaseReference game = _database.ref("users/$userId/games/$gameId");
     return await game.remove().then((onValue) {
+      return true;
+    }).catchError((onError) {
+      return false;
+    });
+  }
+
+  Future<bool> _deleteChekpoints(String userId, String gameId) async {
+    DatabaseReference gameCheckpoints =
+        _database.ref("checkpoints/$userId/$gameId");
+    return await gameCheckpoints.remove().then((onValue) {
       return true;
     }).catchError((onError) {
       return false;
