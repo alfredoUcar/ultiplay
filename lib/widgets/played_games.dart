@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ultiplay/models/entities/game_summary.dart';
+import 'package:ultiplay/screens/game_detail.dart';
 import 'package:ultiplay/states/played_games.dart' as States;
 import 'package:ultiplay/states/session.dart' as States;
 
@@ -111,6 +112,14 @@ class PlayedGames extends StatelessWidget {
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                     ),
+                    onTap: () {
+                      var userId =
+                          Provider.of<States.Session>(context, listen: false)
+                              .user!
+                              .id;
+                      playedGames.select(userId, playedGame.gameId as String);
+                      Navigator.of(context).pushNamed(GameDetail.routeName);
+                    },
                   ),
                 );
               },

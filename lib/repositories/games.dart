@@ -2,6 +2,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:ultiplay/models/entities/game_summary.dart';
 import 'package:ultiplay/models/game.dart';
 
+class GameNotFound implements Exception {}
+
 class Games {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 
@@ -66,6 +68,18 @@ class Games {
     }).catchError((onError) {
       return false;
     });
+  }
+
+  Future<Game> get(String userId, String gameId) async {
+    DatabaseReference game = _database.ref("games/$userId/$gameId");
+    DatabaseEvent event = await game.once();
+    if (!event.snapshot.exists || event.snapshot.value == null) {
+      throw new GameNotFound();
+    }
+
+    var data = event.snapshot.value as Map;
+    data['id'] = event.snapshot.key;
+    return Game.fromMap(data);
   }
 
   Future<List<Game>> list(String userId) async {

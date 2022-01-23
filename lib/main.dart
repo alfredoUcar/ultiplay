@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ultiplay/models/game.dart';
+import 'package:ultiplay/screens/game_detail.dart';
 import 'package:ultiplay/states/current_game.dart' as States;
 import 'package:ultiplay/states/played_games.dart' as States;
 import 'package:ultiplay/states/session.dart' as States;
@@ -91,6 +92,9 @@ class Ultiplay extends StatelessWidget {
               case CurrentGame.routeName:
                 return MaterialPageRoute(
                     settings: settings, builder: (context) => CurrentGame());
+              case GameDetail.routeName:
+                return MaterialPageRoute(
+                    settings: settings, builder: (context) => GameDetail());
               default:
                 return MaterialPageRoute(
                     settings: settings, builder: (context) => Home());

@@ -1,9 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:ultiplay/models/entities/game_summary.dart';
+import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/repositories/games.dart';
 
 class PlayedGames extends ChangeNotifier {
   List<GameSummary> _playedGames = [];
+  Game? _selectedGame;
   late Games _games;
 
   bool _fetched = false;
@@ -23,6 +25,26 @@ class PlayedGames extends ChangeNotifier {
       _playedGames = games;
       notifyListeners();
     });
+  }
+
+  Game? get selectedGame => _selectedGame;
+
+  select(String userId, String gameId) {
+    _fetching = true;
+    notifyListeners();
+
+    _games.get(userId, gameId).then((game) {
+      _fetching = false;
+      _selectedGame = game;
+      notifyListeners();
+    });
+  }
+
+  clearSelected() {
+    if (_selectedGame != null) {
+      _selectedGame = null;
+      notifyListeners();
+    }
   }
 
   bool fetching() => _fetching;
