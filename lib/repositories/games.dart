@@ -1,4 +1,3 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:ultiplay/models/entities/game_summary.dart';
 import 'package:ultiplay/models/game.dart';
@@ -11,7 +10,9 @@ class Games {
     DatabaseReference newGame = games.push();
     var data = game.toMap();
     return await newGame.set(data).then((onValue) async {
-      return await _addSummary(userId, game, newGame.key as String);
+      await _addSummary(userId, game, newGame.key as String);
+      _addCheckpoints(userId, game, newGame.key as String);
+      return true;
     }).catchError((onError) {
       return false;
     });
@@ -25,6 +26,15 @@ class Games {
       return true;
     }).catchError((onError) {
       return false;
+    });
+  }
+
+  void _addCheckpoints(String userId, Game game, String gameId) async {
+    DatabaseReference gameCheckpoints =
+        _database.ref("checkpoints/$userId/$gameId");
+    game.checkpoints.forEach((checkpoint) async {
+      DatabaseReference newCheckpoint = gameCheckpoints.push();
+      await newCheckpoint.set(checkpoint.toMap());
     });
   }
 

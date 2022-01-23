@@ -36,6 +36,12 @@ abstract class Checkpoint {
   String toString() => description;
 
   DateTime get timestamp => _timestamp;
+
+  Map<String, dynamic> toMap() => {
+        'timestamp': _timestamp.millisecondsSinceEpoch,
+        'type': _type.index,
+        'description': description,
+      };
 }
 
 class Goal extends Checkpoint {
