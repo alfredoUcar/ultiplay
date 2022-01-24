@@ -21,8 +21,12 @@ class GameStatus extends StatelessWidget {
                   ? Icon(Icons.circle, color: Colors.green)
                   : Icon(Icons.circle_outlined, color: Colors.grey[400]),
               SizedBox(width: 10),
-              Text(game.yourTeamName, style: teamNameStyle),
               Expanded(
+                flex: 1,
+                child: Text(game.yourTeamName, style: teamNameStyle),
+              ),
+              Expanded(
+                flex: 2,
                 child: Column(
                   children: [
                     Text(
@@ -37,9 +41,12 @@ class GameStatus extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(
-                game.opponentTeamName,
-                style: teamNameStyle,
+              Expanded(
+                flex: 1,
+                child: Text(
+                  game.opponentTeamName,
+                  style: teamNameStyle,
+                ),
               ),
               SizedBox(width: 10),
               game.onDefense()
