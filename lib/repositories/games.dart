@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:ultiplay/models/entities/checkpoint_entry.dart';
 import 'package:ultiplay/models/entities/game_summary.dart';
 import 'package:ultiplay/models/game.dart';
 
@@ -80,6 +81,27 @@ class Games {
     var data = event.snapshot.value as Map;
     data['id'] = event.snapshot.key;
     return Game.fromMap(data);
+  }
+
+  Future<List<CheckpointEntry>> getCheckpointsByGame(
+      String userId, String gameId) async {
+    DatabaseReference checkpoints =
+        _database.ref("checkpoints/$userId/$gameId");
+    DatabaseEvent event = await checkpoints.once();
+    if (!event.snapshot.exists || event.snapshot.value == null) {
+      return [];
+    }
+
+    var rawList = event.snapshot.value as Map;
+    if (rawList.isEmpty) {
+      return [];
+    }
+
+    return rawList.entries.map((data) {
+      var gameData = data.value;
+      gameData['id'] = data.key;
+      return CheckpointEntry.fromMap(data.value);
+    }).toList();
   }
 
   Future<List<Game>> list(String userId) async {

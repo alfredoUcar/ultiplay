@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:ultiplay/models/entities/checkpoint_entry.dart';
 import 'package:ultiplay/models/entities/game_summary.dart';
 import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/repositories/games.dart';
@@ -6,6 +7,7 @@ import 'package:ultiplay/repositories/games.dart';
 class PlayedGames extends ChangeNotifier {
   List<GameSummary> _playedGames = [];
   Game? _selectedGame;
+  List<CheckpointEntry> _selectedGameCheckpoints = [];
   late Games _games;
 
   bool _fetched = false;
@@ -28,16 +30,18 @@ class PlayedGames extends ChangeNotifier {
   }
 
   Game? get selectedGame => _selectedGame;
+  List<CheckpointEntry> get selectedGameCheckpoints => _selectedGameCheckpoints;
 
-  select(String userId, String gameId) {
+  select(String userId, String gameId) async {
     _fetching = true;
     notifyListeners();
 
-    _games.get(userId, gameId).then((game) {
-      _fetching = false;
-      _selectedGame = game;
-      notifyListeners();
-    });
+    _selectedGame = await _games.get(userId, gameId);
+    _selectedGameCheckpoints =
+        await _games.getCheckpointsByGame(userId, gameId);
+
+    _fetching = false;
+    notifyListeners();
   }
 
   clearSelected() {

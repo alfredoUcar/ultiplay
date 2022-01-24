@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ultiplay/states/played_games.dart';
+import 'package:ultiplay/widgets/game_info.dart';
 import 'package:ultiplay/widgets/global_menu.dart';
 
 class GameDetail extends StatelessWidget {
@@ -31,7 +32,7 @@ class GameDetail extends StatelessWidget {
         return Text('Could not load game details');
       }
 
-      return Text(playedGames.selectedGame!.summary.title);
+      return GameInfo();
     });
   }
 }
