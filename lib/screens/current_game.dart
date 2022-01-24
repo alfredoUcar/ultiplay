@@ -62,13 +62,35 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
             (_tabController.index == 0)
                 ? FloatingActionButton(
                     child: Icon(Icons.exit_to_app),
-                    onPressed: () {
-                      currentGame.finish();
-                      currentGame.save(session.user!.id);
-                      playedGames.fetch(session.user!.id);
+                    onPressed: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Confirm"),
+                            content: const Text(
+                                "Are you sure you wish to finish this game?"),
+                            actions: <Widget>[
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                    currentGame.finish();
+                                    currentGame.save(session.user!.id);
+                                    playedGames.fetch(session.user!.id);
 
-                      Navigator.of(context)
-                          .pushReplacementNamed(Home.routeName);
+                                    Navigator.of(context)
+                                        .pushReplacementNamed(Home.routeName);
+                                  },
+                                  child: const Text("FINISH")),
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
+                                child: const Text("CANCEL"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                   )
                 : FloatingActionButton(
