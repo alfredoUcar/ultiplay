@@ -24,17 +24,30 @@ class GameInfo extends StatelessWidget {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(game.yourTeamName, style: teamNameStyle),
-                  Text(
-                    game.scoreboard,
-                    style: scoreBoardStyle,
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      game.yourTeamName,
+                      style: teamNameStyle,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  Text(
-                    game.opponentTeamName,
-                    style: teamNameStyle,
+                  Expanded(
+                    child: Text(
+                      game.scoreboard,
+                      style: scoreBoardStyle,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
+                  Expanded(
+                    child: Text(
+                      game.opponentTeamName,
+                      style: teamNameStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(width: 10),
                 ],
               ),
               Divider(thickness: 1.8),
