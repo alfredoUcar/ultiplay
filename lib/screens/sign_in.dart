@@ -20,6 +20,9 @@ class _SignInState extends State<SignIn> {
   @override
   void initState() {
     super.initState();
+    emailController.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -91,6 +94,24 @@ class _SignInState extends State<SignIn> {
                         .pushReplacementNamed(SignUp.routeName);
                   },
                   child: Text('Create an account')),
+              Visibility(
+                visible: emailController.text.isNotEmpty,
+                child: Column(
+                  children: [
+                    Text('Forgotten your password?'),
+                    TextButton(
+                        onPressed: () {
+                          Provider.of<Session>(context, listen: false)
+                              .sendPasswordResetEmail(
+                                  email: emailController.text)
+                              .then((_) => null);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Password reset email sent')));
+                        },
+                        child: Text('Reset password')),
+                  ],
+                ),
+              ),
               Consumer<Session>(
                 builder: (context, session, child) {
                   return Visibility(

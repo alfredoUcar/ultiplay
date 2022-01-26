@@ -111,4 +111,8 @@ class Session extends ChangeNotifier {
     }
     FirebaseAnalytics.instance.logSignUp(signUpMethod: 'email');
   }
+
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    return Auth.FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
 }
