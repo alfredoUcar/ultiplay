@@ -154,12 +154,6 @@ class _NewGameState extends State<NewGame> {
         title: Text('New game'),
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (isInLastStep()) ? onSubmit : requireToCompleteAllSteps,
-        child: Icon(Icons.play_arrow),
-        backgroundColor: !isInLastStep() ? ThemeData().disabledColor : null,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         child: Row(
@@ -170,14 +164,22 @@ class _NewGameState extends State<NewGame> {
                 Navigator.of(context).pop();
               },
               icon: Icon(Icons.home),
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
+            ),
+            IconButton(
+              onPressed:
+                  (isInLastStep()) ? onSubmit : requireToCompleteAllSteps,
+              icon: Icon(Icons.play_arrow),
+              color: !isInLastStep()
+                  ? Theme.of(context).disabledColor
+                  : Theme.of(context).colorScheme.surface,
             ),
             IconButton(
               onPressed: () {
                 Navigator.pushReplacementNamed(context, NewGame.routeName);
               },
               icon: Icon(Icons.restart_alt),
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
             ),
           ],
         ),
