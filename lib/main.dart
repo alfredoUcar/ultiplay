@@ -2,7 +2,6 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/screens/game_detail.dart';
 import 'package:ultiplay/states/current_game.dart' as States;
 import 'package:ultiplay/states/played_games.dart' as States;
@@ -13,11 +12,14 @@ import 'package:ultiplay/screens/new_game.dart';
 import 'package:ultiplay/screens/sign_in.dart';
 import 'package:ultiplay/screens/sign_up.dart';
 import 'package:ultiplay/screens/verify_email.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseAnalytics.instance.logAppOpen();
+  MobileAds.instance.initialize();
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => States.Session()),
