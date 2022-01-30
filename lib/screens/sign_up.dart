@@ -20,11 +20,11 @@ class _SignUpState extends State<SignUp> {
   final repeatPasswordController = TextEditingController();
 
   @override
-  Future<void> initState() async {
+  void initState() {
     super.initState();
     var session = Provider.of<Session>(context, listen: false);
     if (session.user != null && !session.user!.emailVerified) {
-      await session.sendEmailVerification();
+      session.sendEmailVerification();
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Validation email sent')));
       Navigator.of(context).pushReplacementNamed(VerifyEmail.routeName);
