@@ -1,0 +1,41 @@
+{
+  "project_info": {
+    "project_number": "37305625823",
+    "firebase_url": "https://ultiplay-prod-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "ultiplay-prod",
+    "storage_bucket": "ultiplay-prod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37305625823:android:b859f0f2c76e2184f10d6a",
+        "android_client_info": {
+          "package_name": "com.aucendo.ultiplay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "37305625823-n6n6v62fjuvtfkk8dvo45knjo0tipi0j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCz8NMU4R-a-88uAkhXEAKLdxp1BzwQboY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37305625823-n6n6v62fjuvtfkk8dvo45knjo0tipi0j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-7106844252845684~4486369912"
+    }
+  ],
+  "configuration_version": "1"
+}
