@@ -4,6 +4,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ultiplay/screens/current_game.dart';
 import 'package:ultiplay/screens/new_game.dart';
+import 'package:ultiplay/states/config.dart' as States;
 import 'package:ultiplay/states/current_game.dart' as States;
 import 'package:ultiplay/states/played_games.dart' as States;
 import 'package:ultiplay/widgets/global_menu.dart';
@@ -17,37 +18,38 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late BannerAd banner;
+  BannerAd? banner;
   bool bannerAvailable = false;
 
-  @override
-  void initState() {
-    super.initState();
+  loadBanner(String id) {
     banner = BannerAd(
-        size: AdSize.banner,
-        adUnitId:
-            'ca-app-pub-3940256099942544/6300978111', // TODO: replace with production ad id ca-app-pub-7106844252845684/7473364015
-        listener: BannerAdListener(
-          onAdLoaded: (_) {
-            setState(() {
-              bannerAvailable = true;
-            });
-          },
-          onAdFailedToLoad: (Ad ad, LoadAdError error) {
-            FirebaseCrashlytics.instance.recordError(error, StackTrace.current);
-            ad.dispose();
-            setState(() {
-              bannerAvailable = false;
-            });
-          },
-        ),
-        request: AdRequest());
-    banner.load();
+      size: AdSize.banner,
+      adUnitId: id,
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            bannerAvailable = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          FirebaseCrashlytics.instance.recordError(error, StackTrace.current);
+          ad.dispose();
+          setState(() {
+            bannerAvailable = false;
+          });
+        },
+      ),
+      request: AdRequest(),
+    );
+
+    banner!.load();
   }
 
   @override
   void dispose() {
-    banner.dispose();
+    if (banner != null) {
+      banner!.dispose();
+    }
     super.dispose();
   }
 
@@ -109,13 +111,28 @@ class _HomeState extends State<Home> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            alignment: Alignment.center,
-            height: banner.size.height.toDouble(),
-            width: banner.size.width.toDouble(),
-            child: Visibility(
-                visible: bannerAvailable,
-                child: AdWidget(key: Key('banner'), ad: banner)),
+          Consumer<States.Config>(
+            builder: (context, config, child) {
+              if (!config.loaded || !config.data.containsKey('homeAdId')) {
+                return Container();
+              }
+
+              if (banner == null) {
+                loadBanner(config.data['homeAdId']);
+                return Container();
+              }
+
+              if (!bannerAvailable) {
+                return Container();
+              }
+
+              return Container(
+                alignment: Alignment.center,
+                height: (banner!.size.height + 20).toDouble(),
+                width: banner!.size.width.toDouble(),
+                child: AdWidget(key: Key('banner'), ad: banner as BannerAd),
+              );
+            },
           ),
           PlayedGames(),
         ],

@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ultiplay/screens/game_detail.dart';
+import 'package:ultiplay/states/config.dart' as States;
 import 'package:ultiplay/states/current_game.dart' as States;
 import 'package:ultiplay/states/played_games.dart' as States;
 import 'package:ultiplay/states/session.dart' as States;
@@ -14,27 +15,32 @@ import 'package:ultiplay/screens/sign_up.dart';
 import 'package:ultiplay/screens/verify_email.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  FirebaseAnalytics.instance.logAppOpen();
-  MobileAds.instance.initialize();
+class App {
+  static Future<void> init() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    await FirebaseAnalytics.instance.logAppOpen();
+    await MobileAds.instance.initialize();
+  }
 
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (context) => States.Session()),
-      ChangeNotifierProvider(create: (context) => States.CurrentGame()),
-      ChangeNotifierProvider(create: (context) {
-        var state = States.PlayedGames();
-        var user = Provider.of<States.Session>(context, listen: false).user;
-        if (user != null) {
-          state.fetch(user.id);
-        }
-        return state;
-      }),
-    ],
-    child: Ultiplay(),
-  ));
+  static Widget create(String environment) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => States.Session()),
+        ChangeNotifierProvider(create: (context) => States.Config(environment)),
+        ChangeNotifierProvider(create: (context) => States.CurrentGame()),
+        ChangeNotifierProvider(create: (context) {
+          var state = States.PlayedGames();
+          var user = Provider.of<States.Session>(context, listen: false).user;
+          if (user != null) {
+            state.fetch(user.id);
+          }
+          return state;
+        }),
+      ],
+      child: Ultiplay(),
+    );
+  }
 }
 
 class Ultiplay extends StatelessWidget {
