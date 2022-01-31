@@ -10,13 +10,14 @@ class CallStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var bodyTextStyle = TextStyle(fontSize: 20);
     return Consumer<CurrentGame>(
       child: Expanded(
         child: Padding(
-          padding: EdgeInsets.only(top: 10.0),
+          padding: EdgeInsets.only(top: 25.0),
           child: Text(
             'On Call',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -31,7 +32,7 @@ class CallStep extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('From'),
+                      Text('From', style: bodyTextStyle),
                       Radio(
                           value: game.yourTeamName,
                           groupValue: game.callInProgress?.team,
@@ -40,7 +41,7 @@ class CallStep extends StatelessWidget {
                               game.callInProgress?.team = value;
                             }
                           }),
-                      Text(game.yourTeamName),
+                      Text(game.yourTeamName, style: bodyTextStyle),
                       Radio(
                           value: game.opponentTeamName,
                           groupValue: game.callInProgress?.team,
@@ -49,7 +50,7 @@ class CallStep extends StatelessWidget {
                               game.callInProgress?.team = value;
                             }
                           }),
-                      Text(game.opponentTeamName),
+                      Text(game.opponentTeamName, style: bodyTextStyle),
                     ],
                   ),
                 ),
@@ -57,7 +58,7 @@ class CallStep extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text('Call type'),
+                      Text('Call type', style: bodyTextStyle),
                       DropdownButton<CallType>(
                           onChanged: (CallType? value) {
                             game.callInProgress!.callType = value;
@@ -65,9 +66,10 @@ class CallStep extends StatelessWidget {
                           value: game.callInProgress!.callType,
                           items: CallType.values
                               .map((e) => DropdownMenuItem(
-                                    child: Text(e.name
-                                        .capitalize()
-                                        .replaceAll('_', ' ')),
+                                    child: Text(
+                                      e.name.capitalize().replaceAll('_', ' '),
+                                      style: bodyTextStyle,
+                                    ),
                                     value: e,
                                   ))
                               .toList()),

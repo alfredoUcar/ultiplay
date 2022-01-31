@@ -7,13 +7,14 @@ class PlayOnStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var bodyTextStyle = TextStyle(fontSize: 20);
     return Consumer<CurrentGame>(
       child: Expanded(
         child: Padding(
-          padding: EdgeInsets.only(top: 10.0),
+          padding: EdgeInsets.only(top: 25.0),
           child: Text(
             'Play On',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -25,7 +26,7 @@ class PlayOnStep extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: Text('$team on offense'),
+                child: Text('$team on offense', style: bodyTextStyle),
               ),
             ), // description
             Expanded(

@@ -8,13 +8,14 @@ class PullStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var bodyTextStyle = TextStyle(fontSize: 20);
     return Consumer<CurrentGame>(
       child: Expanded(
         child: Padding(
-          padding: EdgeInsets.only(top: 10.0),
+          padding: EdgeInsets.only(top: 25.0),
           child: Text(
             'Pull time',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -41,10 +42,12 @@ class PullStep extends StatelessWidget {
             child as Widget,
             Expanded(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  if (genderRatioMessage != null) Text(genderRatioMessage),
-                  Text(sideMessage),
-                  Text('$team throws pull')
+                  if (genderRatioMessage != null)
+                    Text(genderRatioMessage, style: bodyTextStyle),
+                  Text(sideMessage, style: bodyTextStyle),
+                  Text('$team throws pull', style: bodyTextStyle)
                 ],
               ),
             ),
