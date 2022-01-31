@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ultiplay/models/checkpoint.dart';
 import 'package:ultiplay/models/entities/checkpoint_entry.dart';
 import 'package:ultiplay/models/game.dart';
 import 'package:ultiplay/states/played_games.dart';
