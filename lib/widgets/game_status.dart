@@ -23,7 +23,11 @@ class GameStatus extends StatelessWidget {
               SizedBox(width: 10),
               Expanded(
                 flex: 1,
-                child: Text(game.yourTeamName, style: teamNameStyle),
+                child: Text(
+                  game.yourTeamName,
+                  style: teamNameStyle,
+                  textAlign: TextAlign.center,
+                ),
               ),
               Expanded(
                 flex: 2,
@@ -46,6 +50,7 @@ class GameStatus extends StatelessWidget {
                 child: Text(
                   game.opponentTeamName,
                   style: teamNameStyle,
+                  textAlign: TextAlign.center,
                 ),
               ),
               SizedBox(width: 10),
