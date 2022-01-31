@@ -96,7 +96,29 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
                 : FloatingActionButton(
                     child: Icon(Icons.undo),
                     onPressed: () {
-                      currentGame.undoLastCheckpoint();
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Confirm"),
+                            content: Text(
+                                "Are you sure you wish to undo \"${currentGame.checkpoints.last.description}\"?"),
+                            actions: <Widget>[
+                              TextButton(
+                                  onPressed: () async {
+                                    currentGame.undoLastCheckpoint();
+                                    Navigator.of(context).pop(true);
+                                  },
+                                  child: const Text("UNDO")),
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
+                                child: const Text("CANCEL"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                   ),
       ),
