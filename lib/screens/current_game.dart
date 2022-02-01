@@ -42,8 +42,8 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
   @override
   void dispose() {
     _ticker.dispose();
-    super.dispose();
     _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -72,12 +72,11 @@ class _CurrentGame extends State<CurrentGame> with TickerProviderStateMixin {
                                 "Are you sure you wish to finish this game?"),
                             actions: <Widget>[
                               TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(true);
+                                  onPressed: () async {
                                     currentGame.finish();
-                                    currentGame.save(session.user!.id);
+                                    await currentGame.save(session.user!.id);
                                     playedGames.fetch(session.user!.id);
-
+                                    Navigator.of(context).pop(true);
                                     Navigator.of(context)
                                         .pushReplacementNamed(Home.routeName);
                                   },
