@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ultiplay/screens/home.dart';
+import 'package:ultiplay/screens/reset_password.dart';
 import 'package:ultiplay/screens/sign_up.dart';
 import 'package:ultiplay/states/session.dart';
 
@@ -87,30 +88,26 @@ class _SignInState extends State<SignIn> {
                   },
                   child: Text('Sign in')),
               SizedBox(height: 20),
-              Text('Not registered yet?'),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushReplacementNamed(SignUp.routeName);
-                  },
-                  child: Text('Create an account')),
-              Visibility(
-                visible: emailController.text.isNotEmpty,
-                child: Column(
-                  children: [
-                    Text('Forgotten your password?'),
-                    TextButton(
-                        onPressed: () {
-                          Provider.of<Session>(context, listen: false)
-                              .sendPasswordResetEmail(
-                                  email: emailController.text)
-                              .then((_) => null);
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Password reset email sent')));
-                        },
-                        child: Text('Reset password')),
-                  ],
-                ),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text('Not registered yet?'),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pushReplacementNamed(SignUp.routeName);
+                    },
+                    child: Text('Create an account')),
+              ]),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Forgotten your password?'),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushNamed(ResetPassword.routeName);
+                      },
+                      child: Text('Reset password')),
+                ],
               ),
               Consumer<Session>(
                 builder: (context, session, child) {

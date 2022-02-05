@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ultiplay/screens/game_detail.dart';
+import 'package:ultiplay/screens/reset_password.dart';
 import 'package:ultiplay/states/config.dart' as States;
 import 'package:ultiplay/states/current_game.dart' as States;
 import 'package:ultiplay/states/played_games.dart' as States;
@@ -84,6 +85,7 @@ class Ultiplay extends StatelessWidget {
         routes: {
           SignIn.routeName: (context) => SignIn(),
           SignUp.routeName: (context) => SignUp(),
+          ResetPassword.routeName: (context) => ResetPassword(),
         },
         onGenerateRoute: (settings) {
           if (session.user == null) {
